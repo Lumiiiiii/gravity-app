@@ -698,10 +698,40 @@ body {
     transform: translateY(-2px);
 }
 
-/* Mobile Tap Highlight Fix */
+/* Mobile Tap Highlight Fix - Aggressive */
 * {
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none;
 }
+
+*:focus,
+*:active {
+    outline: none !important;
+}
+
+/* Restore minimal focus for accessibility if needed, but per request remove "square" effect */
+/* Specifically for rounded elements to avoid square highlight box */
+.click-target,
+.c4-cell,
+.cell,
+.memory-card,
+.rps-controls button,
+.hole,
+.skin-preview {
+    border-radius: 50%;
+    /* Ensure purely visual roundness doesn't get boxed */
+    /* Box shadow is used for glow, so we must be careful not to remove ALL box-shadows on active, 
+       just the browser default focus ring if any. 
+       The *:active rule above might be too aggressive if we have custom active states. 
+    */
+}
+
+/* Re-apply custom active states that might have been nuked */
+.click-target:active {
+    transform: scale(0.95);
+    /* We want the glow to stay, so we don't set box-shadow: none here */
+}
+
 
 @media (max-width: 600px) {
     .app-container {
