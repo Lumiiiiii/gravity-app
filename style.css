@@ -698,14 +698,25 @@ body {
     transform: translateY(-2px);
 }
 
+/* Mobile Tap Highlight Fix */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 @media (max-width: 600px) {
+    .app-container {
+        padding: 1rem;
+    }
+
     .clicker-layout {
         grid-template-columns: 1fr;
     }
 
+    /* Tris Mobile */
     .tris-board {
         grid-template-columns: repeat(3, 80px);
         grid-template-rows: repeat(3, 80px);
+        gap: 5px;
     }
 
     .cell {
@@ -714,14 +725,58 @@ body {
         font-size: 2rem;
     }
 
+    /* Memory Mobile */
     .memory-grid {
-        grid-template-columns: repeat(4, 60px);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 100%;
     }
 
     .memory-card {
+        width: 100%;
+        aspect-ratio: 1;
+        height: auto;
+        font-size: 1.5rem;
+    }
+
+    /* Connect 4 Mobile */
+    .c4-board {
+        gap: 5px;
+        padding: 5px;
+        max-width: 100%;
+        overflow-x: auto;
+        /* Just in case */
+    }
+
+    .c4-cell {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Mole Mobile */
+    .mole-grid {
+        grid-template-columns: repeat(3, 90px);
+        gap: 10px;
+    }
+
+    .hole {
+        width: 90px;
+        height: 90px;
+    }
+
+    /* RPS Mobile */
+    .rps-arena {
+        gap: 1rem;
+    }
+
+    .rps-arena .emoji,
+    .rps-controls button {
+        font-size: 3rem;
+    }
+
+    .rps-controls button {
         width: 60px;
         height: 60px;
-        font-size: 1.5rem;
     }
 }
 
