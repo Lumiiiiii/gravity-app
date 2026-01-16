@@ -92,3 +92,33 @@ function closeGame() {
     // Cleanup/Stopping logic if needed per game could go here
     if (typeof stopClicker === 'function') stopClicker();
 }
+
+/* VICTORY MODAL LOGIC */
+let onRestartCallback = null;
+
+function showVictory(title, message, onRestart) {
+    document.getElementById('victory-title').textContent = title;
+    document.getElementById('victory-message').innerHTML = message; // Allow HTML for line breaks
+
+    const restartBtn = document.getElementById('victory-restart-btn');
+    onRestartCallback = onRestart;
+
+    restartBtn.onclick = () => {
+        closeVictoryModal();
+        if (onRestartCallback) onRestartCallback();
+    };
+
+    document.getElementById('victory-modal').classList.remove('hidden');
+
+    // Simple confetti or sound could be triggered here
+}
+
+function closeVictoryModal() {
+    document.getElementById('victory-modal').classList.add('hidden');
+    // If user closes without restarting, we might want to return to hub or just stay viewing board?
+    // "Chiudi" usually implies staying on board to see result.
+    // "Torna alla Home" is already on main interface.
+}
+
+window.showVictory = showVictory;
+window.closeVictoryModal = closeVictoryModal;

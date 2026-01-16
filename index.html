@@ -17,7 +17,7 @@
     <div class="app-container">
         <!-- HEADER -->
         <header class="main-header">
-            <h1 class="logo">NEON <span class="highlight">ARCADE</span></h1>
+            <h1 class="logo"><span class="neon-text"></span>NEON</span> <span class="highlight">ARCADE</span></h1>
             <p class="subtitle">Seleziona un gioco per iniziare</p>
         </header>
 
@@ -191,33 +191,67 @@
                         </button>
                     </div>
 
-                    <!-- Right: Shop -->
-                    <div class="clicker-shop">
-                        <h3>Potenziamenti</h3>
+                </div>
 
-                        <div class="shop-item">
-                            <div class="shop-info">
-                                <h4>Click Power</h4>
-                                <p>Livello attuale: <span id="click-power-val">1</span></p>
-                            </div>
-                            <button id="btn-buy-power" onclick="buyUpgrade('power')">
-                                Costo: <span id="cost-power">20</span>
-                            </button>
+                <!-- Right: Shop -->
+                <div class="clicker-shop">
+                    <h3>Potenziamenti</h3>
+
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <h4>Click Power</h4>
+                            <p>Livello attuale: <span id="click-power-val">1</span></p>
                         </div>
+                        <button id="btn-buy-power" onclick="buyUpgrade('power')">
+                            Costo: <span id="cost-power">20</span>
+                        </button>
+                    </div>
 
-                        <div class="shop-item">
-                            <div class="shop-info">
-                                <h4>Auto Clicker</h4>
-                                <p>Livello attuale: <span id="auto-click-val">0</span></p>
-                            </div>
-                            <button id="btn-buy-auto" onclick="buyUpgrade('auto')">
-                                Costo: <span id="cost-auto">50</span>
-                            </button>
+                    <div class="shop-item">
+                        <div class="shop-info">
+                            <h4>Auto Clicker</h4>
+                            <p>Livello attuale: <span id="auto-click-val">0</span></p>
+                        </div>
+                        <button id="btn-buy-auto" onclick="buyUpgrade('auto')">
+                            Costo: <span id="cost-auto">50</span>
+                        </button>
+                    </div>
+
+                    <h3>Skins</h3>
+                    <div class="skins-grid">
+                        <div class="skin-item" id="skin-neon-blue" onclick="buySkin('neon-blue')">
+                            <div class="skin-preview" style="background: #0ea5e9; box-shadow: 0 0 15px #0ea5e9;"></div>
+                            <p>Neon Blue</p>
+                            <span class="cost">10,000</span>
+                        </div>
+                        <div class="skin-item" id="skin-gold" onclick="buySkin('gold')">
+                            <div class="skin-preview" style="background: #eab308; box-shadow: 0 0 15px #eab308;"></div>
+                            <p>Midas Gold</p>
+                            <span class="cost">20,000</span>
+                        </div>
+                        <div class="skin-item" id="skin-matrix" onclick="buySkin('matrix')">
+                            <div class="skin-preview" style="background: #22c55e; box-shadow: 0 0 15px #22c55e;"></div>
+                            <p>Matrix</p>
+                            <span class="cost">300,000</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+    </div>
+    </section>
+
+    <!-- VICTORY MODAL -->
+    <div id="victory-modal" class="victory-modal hidden">
+        <div class="victory-content">
+            <div id="victory-icon" class="victory-icon">🏆</div>
+            <h2 id="victory-title">Vittoria!</h2>
+            <p id="victory-message">Hai vinto la partita!</p>
+            <div class="victory-actions">
+                <button id="victory-restart-btn" class="primary-btn">Gioca Ancora</button>
+                <button onclick="closeVictoryModal()" class="secondary-btn">Chiudi</button>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- SCRIPTS -->

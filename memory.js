@@ -188,11 +188,22 @@ function cpuMemoryMove() {
 function endMemoryGame() {
     memoryRunning = false;
     let msg = '';
-    if (scores.p1 > scores.p2) msg = (memoryMode === 'pve' ? 'Hai vinto! 🎉' : `${playersConfig.p1.name} Vince! 🎉`);
-    else if (scores.p2 > scores.p1) msg = (memoryMode === 'pve' ? 'CPU Vince! 🤖' : `${playersConfig.p2.name} Vince! 🎉`);
-    else msg = 'Pareggio!';
+    let title = 'Fine Partita';
 
-    alert(msg);
+    if (scores.p1 > scores.p2) {
+        msg = (memoryMode === 'pve' ? 'Hai vinto! 🎉' : `${playersConfig.p1.name} Vince! 🎉`);
+        title = (memoryMode === 'pve' ? 'Vittoria!' : 'Vincitore!');
+    }
+    else if (scores.p2 > scores.p1) {
+        msg = (memoryMode === 'pve' ? 'CPU Vince! 🤖' : `${playersConfig.p2.name} Vince! 🎉`);
+        title = (memoryMode === 'pve' ? 'Sconfitta!' : 'Vincitore!');
+    }
+    else {
+        msg = 'Pareggio!';
+        title = 'Pareggio';
+    }
+
+    showVictory(title, msg, () => initMemory(memoryMode));
 }
 
 window.initMemory = initMemory;

@@ -97,9 +97,11 @@ function determineWinner(choice1, choice2) {
         ) {
             result = (rpsMode === 'pve' ? "Hai vinto! 🎉" : `${playersConfig.p1.name} Vince! 🎉`);
             resultDisplay.style.color = (rpsMode === 'pve' ? "#22c55e" : playersConfig.p1.color);
+            showVictory("Vittoria!", result, () => initRPS(rpsMode));
         } else {
             result = (rpsMode === 'pve' ? "Hai perso! 💀" : `${playersConfig.p2.name} Vince! 🎉`);
             resultDisplay.style.color = (rpsMode === 'pve' ? "#ef4444" : playersConfig.p2.color);
+            showVictory("Risultato", result, () => initRPS(rpsMode));
         }
     }
 

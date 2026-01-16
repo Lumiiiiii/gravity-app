@@ -92,22 +92,29 @@ function animateDrop(r, c, playerKey, colorVal) {
 
     if (checkWin(r, c, playerKey)) {
         let winName;
+        let title = "Vittoria!";
+        let msg = "";
+
         if (c4Mode === 'pve') {
             winName = (playerKey === 'p1') ? "ROSSO" : "GIALLO";
+            title = (playerKey === 'p1') ? "Vittoria!" : "Sconfitta!";
+            msg = (playerKey === 'p1') ? "Hai vinto! 🎉" : "La CPU ha vinto! 🤖";
         } else {
             winName = playersConfig[playerKey].name;
+            msg = `${winName} VINCE! 🎉`;
         }
-        c4Status.textContent = `${winName} VINCE! 🎉`;
-        c4Status.style.color = colorVal;
+
+        c4Status.textContent = `${winName} VINCE! 🎉`; // Keep text update for background
         c4Running = false;
+        showVictory(title, msg, initConnect4); // initConnect4 is restart
         return;
     }
 
     // Check Draw
     if (c4Grid.flat().every(val => val !== null)) {
         c4Status.textContent = "PAREGGIO!";
-        c4Status.style.color = "white";
         c4Running = false;
+        showVictory("Pareggio!", "Nessuna mossa rimasta.", initConnect4);
         return;
     }
 

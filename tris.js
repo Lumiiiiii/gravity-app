@@ -116,18 +116,23 @@ function checkWinner() {
     }
 
     if (roundWon) {
+        let title = '';
+        let msg = '';
         if (trisMode === 'pve') {
-            statusText.textContent = (currentPlayer === 'x') ? "Hai vinto! 🎉" : "La CPU ha vinto! 🤖";
+            title = (currentPlayer === 'x') ? "Vittoria!" : "Sconfitta!";
+            msg = (currentPlayer === 'x') ? "Hai battuto la CPU! 🎉" : "La CPU ha vinto! 🤖";
         } else {
             const pKey = currentPlayer === 'x' ? 'p1' : 'p2';
             const pName = playersConfig[pKey].name;
-            statusText.textContent = `${pName} ha vinto! 🎉`;
+            title = "Vittoria!";
+            msg = `${pName} ha vinto! 🎉`;
         }
         running = false;
+        showVictory(title, msg, resetTris);
     }
     else if (!options.includes("")) {
-        statusText.textContent = `Pareggio! 😐`;
         running = false;
+        showVictory("Pareggio!", "Nessun vincitore questa volta. 😐", resetTris);
     }
     else {
         changePlayer();

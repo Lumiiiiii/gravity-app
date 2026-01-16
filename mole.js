@@ -82,13 +82,23 @@ function countDown() {
 
 function handleRoundEnd() {
     if (moleMode === 'pve') {
-        alert('GAME OVER! Punteggio finale: ' + result);
+        showVictory("Game Over", `Punteggio finale: ${result}`, startMole);
     } else {
         // PvP Logic
         moleScores[moleTurn] = result;
 
         if (moleTurn === 'p1') {
-            alert(`Fine turno ${playersConfig.p1.name}! Punteggio: ${result}. \nTocca a ${playersConfig.p2.name}.`);
+            // Mid-turn notification. Using showVictory for consistency or a custom alert?
+            // "Chiudi" in modal just hides it. So we rely on "Start" button in UI to continue.
+            showVictory("Fine Turno",
+                `Fine turno ${playersConfig.p1.name}!<br>Punteggio: <b>${result}</b><br>Tocca a ${playersConfig.p2.name}.`,
+                () => {
+                    // Callback on restart/close.
+                    // We don't want to restart P1, we want to prep P2.
+                    // The UI is already prepped by logic below.
+                }
+            );
+
             moleTurn = 'p2';
             // Reset for P2
             result = 0;
@@ -99,13 +109,17 @@ function handleRoundEnd() {
             turnMsgDisplay.style.color = playersConfig.p2.color;
         } else {
             // End of P2
-            let msg = `Fine partita!\n${playersConfig.p1.name}: ${moleScores.p1}\n${playersConfig.p2.name}: ${moleScores.p2}\n`;
-            if (moleScores.p1 > moleScores.p2) msg += `Vince ${playersConfig.p1.name}! 🎉`;
-            else if (moleScores.p2 > moleScores.p1) msg += `Vince ${playersConfig.p2.name}! 🎉`;
+            let msg = `Fine partita!<br>
+                       ${playersConfig.p1.name}: ${moleScores.p1}<br>
+                       ${playersConfig.p2.name}: ${moleScores.p2}<br><br>`;
+
+            let title = "Risultati";
+
+            if (moleScores.p1 > moleScores.p2) msg += `<span style="color:${playersConfig.p1.color}">${playersConfig.p1.name} Vince! 🎉</span>`;
+            else if (moleScores.p2 > moleScores.p1) msg += `<span style="color:${playersConfig.p2.color}">${playersConfig.p2.name} Vince! 🎉</span>`;
             else msg += "Pareggio! 😐";
 
-            alert(msg);
-            startMoleSetup('pvp'); // Reset to P1 ready state
+            showVictory(title, msg, () => startMoleSetup('pvp'));
         }
     }
 }
