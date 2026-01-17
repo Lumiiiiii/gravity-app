@@ -16,7 +16,8 @@ let gameState = {
         autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5 },
         critChance: { level: 0, baseCost: 100, costMultiplier: 1.8 },
         multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0 },
-        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 }
+        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 },
+        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 }
     },
 
     // Skins
@@ -253,6 +254,11 @@ function performClick(event) {
     createFloatingText(event, earnedCoins, isCrit);
     animateClickButton();
 
+    // Particle effects if purchased
+    if (gameState.upgrades.particleEffects.level > 0) {
+        createParticles(event);
+    }
+
     updateAllUI();
 }
 
@@ -388,7 +394,8 @@ function confirmPrestige() {
         autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5 },
         critChance: { level: 0, baseCost: 100, costMultiplier: 1.8 },
         multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0 },
-        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 }
+        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 },
+        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 }
     };
 
     // Keep skins, premium status
@@ -681,6 +688,36 @@ function animateClickButton() {
     btn.classList.remove('pulse');
     void btn.offsetWidth; // Trigger reflow
     btn.classList.add('pulse');
+}
+
+// === PARTICLE EFFECTS ===
+function createParticles(event) {
+    const container = document.querySelector('.click-button-container');
+    const rect = container.getBoundingClientRect();
+
+    // Get color from current skin or default
+    const currentSkin = SKINS[gameState.equippedSkin];
+    const particleColor = currentSkin?.particleColor || currentSkin?.color || '#fca5a5';
+
+    // Number of particles based on upgrade level
+    const particleCount = 8 + (gameState.upgrades.particleEffects.level * 2);
+
+    // Create particles in all directions
+    for (let i = 0; i < Math.min(particleCount, 16); i++) {
+        const particle = document.createElement('div');
+        particle.className = `particle p${(i % 8) + 1}`;
+        particle.style.backgroundColor = particleColor;
+        particle.style.left = `${event.clientX - rect.left}px`;
+        particle.style.top = `${event.clientY - rect.top}px`;
+
+        // Add glow effect
+        particle.style.boxShadow = `0 0 10px ${particleColor}`;
+
+        container.appendChild(particle);
+
+        // Remove after animation
+        setTimeout(() => particle.remove(), 800);
+    }
 }
 
 // === HELPERS ===

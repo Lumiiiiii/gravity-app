@@ -289,6 +289,28 @@ body::before {
     user-select: none;
     position: relative;
     overflow: visible;
+
+    /* SUPER AGGRESSIVE tap highlight removal */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    outline: 0 !important;
+    outline: none !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+}
+
+.click-target::before,
+.click-target::after {
+    /* Remove any pseudo-element highlights */
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
 }
 
 .click-target:hover {
@@ -298,6 +320,20 @@ body::before {
 
 .click-target:active {
     transform: scale(0.95);
+    /* No outline on active */
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.click-target:focus {
+    /* No outline on focus */
+    outline: none !important;
+    box-shadow: 0 0 40px rgba(252, 165, 165, 0.4) !important;
+}
+
+.click-target:focus-visible {
+    /* Modern focus-visible API */
+    outline: none !important;
 }
 
 .click-target.pulse {
@@ -415,6 +451,147 @@ body::before {
         transform: translateY(-80px) scale(1.2);
     }
 }
+
+/* ========== PARTICLE SYSTEM ========== */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 1;
+    z-index: 100;
+}
+
+/* Particle animations - 8 direzioni */
+@keyframes particle1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(60px, -60px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle2 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(80px, 0) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle3 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(60px, 60px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle4 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(0, 80px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle5 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-60px, 60px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle6 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-80px, 0) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle7 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-60px, -60px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes particle8 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(0, -80px) scale(0);
+        opacity: 0;
+    }
+}
+
+.particle.p1 {
+    animation: particle1 0.8s ease-out forwards;
+}
+
+.particle.p2 {
+    animation: particle2 0.8s ease-out forwards;
+}
+
+.particle.p3 {
+    animation: particle3 0.8s ease-out forwards;
+}
+
+.particle.p4 {
+    animation: particle4 0.8s ease-out forwards;
+}
+
+.particle.p5 {
+    animation: particle5 0.8s ease-out forwards;
+}
+
+.particle.p6 {
+    animation: particle6 0.8s ease-out forwards;
+}
+
+.particle.p7 {
+    animation: particle7 0.8s ease-out forwards;
+}
+
+.particle.p8 {
+    animation: particle8 0.8s ease-out forwards;
+}
+
 
 /* ========== SHOP PANEL ========== */
 .shop-panel {
