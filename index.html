@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Arcade</title>
+    <title>Neon Clicker - Premium Idle Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Press+Start+2P&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Press+Start+2P&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,252 +16,292 @@
 <body>
     <div class="app-container">
         <!-- HEADER -->
-        <header class="main-header">
-            <h1 class="logo"><span class="neon-text"></span>NEON</span> <span class="highlight">ARCADE</span></h1>
-            <p class="subtitle">Seleziona un gioco per iniziare</p>
+        <header class="game-header">
+            <div class="header-left">
+                <h1 class="logo"><span class="neon-text">NEON</span> <span class="highlight">CLICKER</span></h1>
+                <p class="tagline">💎 Premium Idle Experience</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <span class="stat-icon">🪙</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="header-coins">0</span>
+                        <span class="stat-label">Coins</span>
+                    </div>
+                </div>
+                <div class="stat-box prestige-stat">
+                    <span class="stat-icon">⭐</span>
+                    <div class="stat-info">
+                        <span class="stat-value" id="header-prestige">0</span>
+                        <span class="stat-label">Prestige</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <!-- MODE SELECTION MODAL -->
-        <div id="mode-modal" class="mode-modal hidden">
-            <div class="mode-content">
-                <h2>Scegli Modalità</h2>
-                <p id="mode-game-title">Gioco</p>
-                <button onclick="startGameWithMode('pve')">👤 vs 🤖 (CPU)</button>
-                <button onclick="startGameWithMode('pvp')">👤 vs 👤 (2 Giocatori)</button>
-                <button class="close-mode" onclick="closeModeModal()">Annulla</button>
-            </div>
-        </div>
-
-        <!-- PLAYER SETUP MODAL -->
-        <div id="player-setup-modal" class="mode-modal hidden">
-            <div class="mode-content setup-content">
-                <h2>Configurazione Giocatori</h2>
-
-                <div class="player-config">
-                    <h3>Giocatore 1</h3>
-                    <input type="text" id="p1-name" placeholder="Nome Giocatore 1" value="Player 1">
-                    <div class="color-picker-container">
-                        <label>Colore:</label>
-                        <input type="color" id="p1-color" value="#ef4444">
-                    </div>
-                </div>
-
-                <div class="player-config">
-                    <h3>Giocatore 2</h3>
-                    <input type="text" id="p2-name" placeholder="Nome Giocatore 2" value="Player 2">
-                    <div class="color-picker-container">
-                        <label>Colore:</label>
-                        <input type="color" id="p2-color" value="#eab308">
-                    </div>
-                </div>
-
-                <button onclick="confirmPlayerSetup()">Inizia Partita</button>
-                <button class="close-mode" onclick="closeSetupModal()">Indietro</button>
-            </div>
-        </div>
-
-        <!-- DASHBOARD (Game Selection) -->
-        <main id="game-hub" class="game-hub visible">
-            <div class="game-card" onclick="openGame('tris')">
-                <div class="icon">❌⭕</div>
-                <h2>Tris</h2>
-                <p>La sfida classica</p>
-            </div>
-            <div class="game-card" onclick="openModeSelection('memory', 'Memory')">
-                <div class="icon">🎴</div>
-                <h2>Memory</h2>
-                <p>Allena la mente</p>
-            </div>
-            <div class="game-card" onclick="openModeSelection('rps', 'Sasso Carta Forbice')">
-                <div class="icon">✂️</div>
-                <h2>Sasso Carta Forbice</h2>
-                <p>Sfida il computer</p>
-            </div>
-            <div class="game-card" onclick="openModeSelection('mole', 'Acchiappa la Talpa')">
-                <div class="icon">🔨</div>
-                <h2>Acchiappa la Talpa</h2>
-                <p>Riflessi rapidi</p>
-            </div>
-            <div class="game-card" onclick="openModeSelection('connect4', 'Forza 4')">
-                <div class="icon">🔴🟡</div>
-                <h2>Forza 4</h2>
-                <p>Strategia pura</p>
-            </div>
-            <div class="game-card" onclick="openGame('clicker')">
-                <div class="icon">👆</div>
-                <h2>Neon Clicker</h2>
-                <p>Guadagna Coins</p>
-            </div>
-        </main>
-
-        <!-- GAME CONTAINERS -->
-        <section id="game-container" class="game-container hidden">
-            <button class="back-btn" onclick="closeGame()">← Torna alla Home</button>
-
-            <!-- TRIS -->
-            <div id="game-tris" class="game-view hidden">
-                <h2>Tris</h2>
-                <div class="tris-board" id="tris-board"></div>
-                <div class="game-info">
-                    <span id="tris-status">Tocca a te!</span>
-                    <button class="restart-btn" onclick="resetTris()">Riavvia</button>
-                </div>
-            </div>
-
-            <!-- MEMORY -->
-            <div id="game-memory" class="game-view hidden">
-                <h2>Memory</h2>
-                <div class="memory-grid" id="memory-grid"></div>
-                <div class="game-info">
-                    <span>Mosse: <span id="memory-moves">0</span></span>
-                    <button class="restart-btn" onclick="initMemory()">Nuova Partita</button>
-                </div>
-            </div>
-
-            <!-- RPS -->
-            <div id="game-rps" class="game-view hidden">
-                <h2>Sasso Carta Forbice</h2>
-                <div class="rps-arena">
-                    <div class="player-side">
-                        <span class="emoji" id="player-choice">❔</span>
-                        <p>Tu</p>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="cpu-side">
-                        <span class="emoji" id="cpu-choice">❔</span>
-                        <p>CPU</p>
-                    </div>
-                </div>
-                <div class="rps-controls">
-                    <button onclick="playRPS('sasso')">✊</button>
-                    <button onclick="playRPS('carta')">✋</button>
-                    <button onclick="playRPS('forbice')">✌️</button>
-                </div>
-                <p id="rps-result" class="result-text">Fai la tua mossa!</p>
-            </div>
-
-            <!-- MOLE -->
-            <div id="game-mole" class="game-view hidden">
-                <h2>Acchiappa la Talpa</h2>
-                <div class="game-info">
-                    <h3 id="mole-turn-msg"></h3>
-                </div>
-                <div class="mole-grid" id="mole-grid">
-                    <!-- 9 holes generated via JS or static -->
-                    <div class="hole" id="hole-0"></div>
-                    <div class="hole" id="hole-1"></div>
-                    <div class="hole" id="hole-2"></div>
-                    <div class="hole" id="hole-3"></div>
-                    <div class="hole" id="hole-4"></div>
-                    <div class="hole" id="hole-5"></div>
-                    <div class="hole" id="hole-6"></div>
-                    <div class="hole" id="hole-7"></div>
-                    <div class="hole" id="hole-8"></div>
-                </div>
-                <div class="game-info">
-                    <span>Punteggio: <span id="mole-score">0</span></span>
-                    <span>Tempo: <span id="mole-time">30</span>s</span>
-                    <button class="restart-btn" onclick="startMole()">Start</button>
-                </div>
-            </div>
-
-            <!-- CONNECT 4 -->
-            <div id="game-connect4" class="game-view hidden">
-                <h2>Forza 4</h2>
-                <div id="c4-board" class="c4-board"></div>
-                <div class="game-info">
-                    <span id="c4-status">Tocca a: ROSSO</span>
-                    <button class="restart-btn" onclick="initConnect4()">Riavvia</button>
-                </div>
-            </div>
-
-            <!-- CLICKER -->
-            <div id="game-clicker" class="game-view hidden">
-                <h2>Neon Clicker</h2>
-
-                <div class="clicker-layout">
-                    <!-- Left: Click Area -->
-                    <div id="clicker-area" class="clicker-area">
-                        <div class="score-display">
-                            <span class="coin-icon">🪙</span>
-                            <span id="clicker-score">0</span>
+        <!-- MAIN GAME AREA -->
+        <main class="clicker-game">
+            <!-- LEFT: Click Zone -->
+            <section class="click-zone">
+                <div class="click-wrapper">
+                    <div class="score-display">
+                        <span class="coin-icon">🪙</span>
+                        <span id="main-score">0</span>
+                        <div class="coins-per-sec">
+                            +<span id="cps-display">0</span>/s
                         </div>
-                        <button id="click-target" class="click-target" onclick="clickTarget(event)">
+                    </div>
+
+                    <div class="click-button-container">
+                        <button id="click-target" class="click-target" onclick="performClick(event)">
                             ⚡
                         </button>
+                        <div class="combo-indicator" id="combo-indicator">
+                            <span class="combo-text">COMBO x<span id="combo-value">1</span></span>
+                        </div>
                     </div>
 
+                    <div class="stats-mini">
+                        <div class="stat-mini">
+                            <span class="label">Power:</span>
+                            <span class="value" id="stat-power">1</span>
+                        </div>
+                        <div class="stat-mini">
+                            <span class="label">Crit:</span>
+                            <span class="value" id="stat-crit">0%</span>
+                        </div>
+                        <div class="stat-mini">
+                            <span class="label">Multi:</span>
+                            <span class="value">x<span id="stat-multi">1</span></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT: Tabs & Shop -->
+            <aside class="shop-panel">
+                <div class="tab-navigation">
+                    <button class="tab-btn active" onclick="switchTab('upgrades')">⚡ Upgrades</button>
+                    <button class="tab-btn" onclick="switchTab('skins')">🎨 Skins</button>
+                    <button class="tab-btn" onclick="switchTab('premium')">💎 Premium</button>
+                    <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
                 </div>
 
-                <!-- Right: Shop -->
-                <div class="clicker-shop">
-                    <h3>Potenziamenti</h3>
+                <!-- UPGRADES TAB -->
+                <div class="tab-content active" id="tab-upgrades">
+                    <h3>⚡ Power Upgrades</h3>
 
-                    <div class="shop-item">
-                        <div class="shop-info">
+                    <div class="upgrade-item" onclick="buyUpgrade('clickPower')">
+                        <div class="upgrade-icon">👆</div>
+                        <div class="upgrade-info">
                             <h4>Click Power</h4>
-                            <p>Livello attuale: <span id="click-power-val">1</span></p>
+                            <p>Level: <span id="level-clickPower">1</span></p>
                         </div>
-                        <button id="btn-buy-power" onclick="buyUpgrade('power')">
-                            Costo: <span id="cost-power">20</span>
-                        </button>
+                        <div class="upgrade-cost">
+                            <span id="cost-clickPower">20</span> 🪙
+                        </div>
                     </div>
 
-                    <div class="shop-item">
-                        <div class="shop-info">
+                    <div class="upgrade-item" onclick="buyUpgrade('autoClicker')">
+                        <div class="upgrade-icon">🤖</div>
+                        <div class="upgrade-info">
                             <h4>Auto Clicker</h4>
-                            <p>Livello attuale: <span id="auto-click-val">0</span></p>
+                            <p>Level: <span id="level-autoClicker">0</span></p>
                         </div>
-                        <button id="btn-buy-auto" onclick="buyUpgrade('auto')">
-                            Costo: <span id="cost-auto">50</span>
-                        </button>
+                        <div class="upgrade-cost">
+                            <span id="cost-autoClicker">50</span> 🪙
+                        </div>
                     </div>
 
-                    <h3>Skins</h3>
-                    <div class="skins-grid">
-                        <div class="skin-item" id="skin-neon-blue" onclick="buySkin('neon-blue')">
-                            <div class="skin-preview" style="background: #0ea5e9; box-shadow: 0 0 15px #0ea5e9;"></div>
-                            <p>Neon Blue</p>
-                            <span class="cost">10,000</span>
+                    <div class="upgrade-item" onclick="buyUpgrade('critChance')">
+                        <div class="upgrade-icon">💥</div>
+                        <div class="upgrade-info">
+                            <h4>Critical Hit</h4>
+                            <p>Level: <span id="level-critChance">0</span></p>
                         </div>
-                        <div class="skin-item" id="skin-gold" onclick="buySkin('gold')">
-                            <div class="skin-preview" style="background: #eab308; box-shadow: 0 0 15px #eab308;"></div>
-                            <p>Midas Gold</p>
-                            <span class="cost">20,000</span>
-                        </div>
-                        <div class="skin-item" id="skin-matrix" onclick="buySkin('matrix')">
-                            <div class="skin-preview" style="background: #22c55e; box-shadow: 0 0 15px #22c55e;"></div>
-                            <p>Matrix</p>
-                            <span class="cost">300,000</span>
+                        <div class="upgrade-cost">
+                            <span id="cost-critChance">100</span> 🪙
                         </div>
                     </div>
+
+                    <div class="upgrade-item" onclick="buyUpgrade('multiplier')">
+                        <div class="upgrade-icon">✖️</div>
+                        <div class="upgrade-info">
+                            <h4>Coin Multiplier</h4>
+                            <p>Level: <span id="level-multiplier">0</span></p>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="cost-multiplier">500</span> 🪙
+                        </div>
+                    </div>
+
+                    <div class="upgrade-item" onclick="buyUpgrade('comboBonus')">
+                        <div class="upgrade-icon">🔥</div>
+                        <div class="upgrade-info">
+                            <h4>Combo Master</h4>
+                            <p>Level: <span id="level-comboBonus">0</span></p>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="cost-comboBonus">1000</span> 🪙
+                        </div>
+                    </div>
+
+                    <button class="prestige-button" onclick="attemptPrestige()" id="prestige-btn">
+                        ⭐ PRESTIGE ⭐
+                        <span class="prestige-hint">Unlock at 100M coins</span>
+                    </button>
+                </div>
+
+                <!-- SKINS TAB -->
+                <div class="tab-content" id="tab-skins">
+                    <h3>🎨 Skin Collection</h3>
+                    <div class="skins-category">
+                        <h4>⚪ Common</h4>
+                        <div class="skins-grid" id="skins-common"></div>
+                    </div>
+                    <div class="skins-category">
+                        <h4>🔵 Rare</h4>
+                        <div class="skins-grid" id="skins-rare"></div>
+                    </div>
+                    <div class="skins-category">
+                        <h4>🟣 Epic</h4>
+                        <div class="skins-grid" id="skins-epic"></div>
+                    </div>
+                    <div class="skins-category">
+                        <h4>🟡 Legendary</h4>
+                        <div class="skins-grid" id="skins-legendary"></div>
+                    </div>
+                </div>
+
+                <!-- PREMIUM TAB -->
+                <div class="tab-content" id="tab-premium">
+                    <h3>💎 Premium Shop</h3>
+                    <p class="premium-desc">Purchase with Telegram Stars</p>
+
+                    <div class="premium-item" onclick="buyPremiumItem('starter')">
+                        <div class="premium-header">
+                            <h4>🌟 Starter Pack</h4>
+                            <span class="stars-cost">50 ⭐</span>
+                        </div>
+                        <p>1M Coins + Random Common Skin</p>
+                    </div>
+
+                    <div class="premium-item" onclick="buyPremiumItem('megaboost')">
+                        <div class="premium-header">
+                            <h4>⚡ Mega Boost</h4>
+                            <span class="stars-cost">100 ⭐</span>
+                        </div>
+                        <p>2x Multiplier for 24 hours</p>
+                    </div>
+
+                    <div class="premium-item" onclick="buyPremiumItem('legendary')">
+                        <div class="premium-header">
+                            <h4>💫 Legendary Pack</h4>
+                            <span class="stars-cost">200 ⭐</span>
+                        </div>
+                        <p>3 Exclusive Legendary Skins</p>
+                    </div>
+
+                    <div class="premium-item" onclick="buyPremiumItem('prestige')">
+                        <div class="premium-header">
+                            <h4>🎆 Prestige Booster</h4>
+                            <span class="stars-cost">150 ⭐</span>
+                        </div>
+                        <p>+5 Instant Prestige Points</p>
+                    </div>
+
+                    <div class="premium-item ultimate" onclick="buyPremiumItem('ultimate')">
+                        <div class="premium-header">
+                            <h4>🔥 Ultimate Bundle</h4>
+                            <span class="stars-cost">500 ⭐</span>
+                        </div>
+                        <p>All Boosts + 10M Coins + Legendary Skins</p>
+                    </div>
+
+                    <div class="premium-note">
+                        ℹ️ Testing Mode: Stars purchases simulated
+                    </div>
+                </div>
+
+                <!-- STATS TAB -->
+                <div class="tab-content" id="tab-stats">
+                    <h3>📊 Statistics</h3>
+
+                    <div class="stat-row">
+                        <span class="stat-name">Total Clicks:</span>
+                        <span class="stat-stat" id="stat-total-clicks">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">Total Coins Earned:</span>
+                        <span class="stat-stat" id="stat-total-coins">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">Highest Combo:</span>
+                        <span class="stat-stat" id="stat-highest-combo">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">Prestige Level:</span>
+                        <span class="stat-stat" id="stat-prestige-level">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">Skins Owned:</span>
+                        <span class="stat-stat"><span id="stat-skins-owned">1</span>/<span
+                                id="stat-skins-total">15</span></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-name">Time Played:</span>
+                        <span class="stat-stat" id="stat-time-played">0m</span>
+                    </div>
+
+                    <button class="danger-btn" onclick="confirmReset()">🗑️ Reset Progress</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- PRESTIGE MODAL -->
+    <div id="prestige-modal" class="modal hidden">
+        <div class="modal-content prestige-modal-content">
+            <div class="prestige-icon">⭐</div>
+            <h2>PRESTIGE UP!</h2>
+            <p>Reset your progress to gain permanent bonuses!</p>
+            <div class="prestige-rewards">
+                <div class="reward-item">
+                    <span class="reward-label">Prestige Points:</span>
+                    <span class="reward-value" id="prestige-points-gain">+1</span>
+                </div>
+                <div class="reward-item">
+                    <span class="reward-label">Permanent Multiplier:</span>
+                    <span class="reward-value">+10%</span>
                 </div>
             </div>
-    </div>
-    </section>
-
-    <!-- VICTORY MODAL -->
-    <div id="victory-modal" class="victory-modal hidden">
-        <div class="victory-content">
-            <div id="victory-icon" class="victory-icon">🏆</div>
-            <h2 id="victory-title">Vittoria!</h2>
-            <p id="victory-message">Hai vinto la partita!</p>
-            <div class="victory-actions">
-                <button id="victory-restart-btn" class="primary-btn">Gioca Ancora</button>
-                <button onclick="closeVictoryModal()" class="secondary-btn">Chiudi</button>
+            <div class="modal-actions">
+                <button class="prestige-confirm-btn" onclick="confirmPrestige()">✨ PRESTIGE NOW</button>
+                <button class="cancel-btn" onclick="closePrestigeModal()">Cancel</button>
             </div>
         </div>
     </div>
+
+    <!-- PREMIUM PURCHASE MODAL -->
+    <div id="premium-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="premium-modal-title">Premium Purchase</h2>
+            <p id="premium-modal-desc">Confirm your purchase?</p>
+            <div class="modal-actions">
+                <button class="primary-btn" id="premium-confirm-btn">Confirm Purchase</button>
+                <button class="cancel-btn" onclick="closePremiumModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="notification-toast" class="notification-toast">
+        <span id="notification-text"></span>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="script.js"></script>
-    <script src="tris.js"></script>
-    <script src="memory.js"></script>
-    <script src="rps.js"></script>
-    <script src="mole.js"></script>
-    <script src="connect4.js"></script>
-    <script src="clicker.js"></script>
+    <script src="clicker-game.js"></script>
+    <script src="telegram-integration.js"></script>
 </body>
 
 </html>
