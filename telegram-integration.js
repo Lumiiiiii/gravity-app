@@ -61,7 +61,8 @@ async function purchaseWithStars(itemId, starsAmount) {
         const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
             },
             body: JSON.stringify({
                 price: starsAmount,
