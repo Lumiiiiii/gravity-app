@@ -1,10 +1,30 @@
+// Test immediato all'avvio
+console.log('=== BACKEND INTEGRATION LOADING ===');
+console.log('File loaded at:', new Date().toISOString());
+
+// Verifica tutte le dipendenze prima di procedere
+setTimeout(() => {
+    console.log('=== CHECKING DEPENDENCIES ===');
+    console.log('window.Telegram:', !!window.Telegram);
+    console.log('window.gameState:', !!window.gameState);
+    console.log('window.formatNumber:', typeof window.formatNumber);
+    console.log('window.showNotification:', typeof window.showNotification);
+    console.log('window.updateAllUI:', typeof window.updateAllUI);
+    console.log('window.renderAllSkins:', typeof window.renderAllSkins);
+    console.log('window.equipSkin:', typeof window.equipSkin);
+    console.log('window.saveGameState:', typeof window.saveGameState);
+}, 100);
+
+// Le funzioni esistenti rimangono invariate...
 // ========================================
 // CLOUD SAVE & BACKEND INTEGRATION
 // ========================================
 
-const BACKEND_URL = window.location.hostname === 'localhost'
+const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3000'
     : 'https://unremembered-gilda-nonrepressed.ngrok-free.dev';
+
+console.log('📡 BACKEND_URL:', BACKEND_URL);
 
 const tg = window.Telegram?.WebApp;
 let currentUserId = null;
@@ -140,16 +160,22 @@ function showDailyRewardModal(reward, streak) {
 }
 
 function closeDailyRewardModal() {
-    document.getElementById('daily-reward-modal').classList.add('hidden');
+    const modal = document.getElementById('daily-reward-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
 }
 
 // === LEADERBOARD ===
 async function loadLeaderboard() {
     const container = document.getElementById('leaderboard-list');
-    if (!container) return;
+    if (!container) {
+        console.error('❌ Leaderboard container not found!');
+        return;
+    }
 
     try {
-        console.log('Loading leaderboard from:', `${BACKEND_URL}/api/leaderboard`);
+        console.log('🏆 Loading leaderboard from:', `${BACKEND_URL}/api/leaderboard`);
 
         const response = await fetch(`${BACKEND_URL}/api/leaderboard`, {
             headers: {
@@ -157,12 +183,14 @@ async function loadLeaderboard() {
             }
         });
 
+        console.log('Response status:', response.status);
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const leaderboard = await response.json();
-        console.log('Leaderboard loaded:', leaderboard.length, 'players');
+        console.log('✅ Leaderboard loaded:', leaderboard.length, 'players');
 
         if (leaderboard.length === 0) {
             container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No players yet. Be the first!</p>';
@@ -185,8 +213,8 @@ async function loadLeaderboard() {
             loadUserRank();
         }
     } catch (error) {
-        console.error('Leaderboard error:', error);
-        container.innerHTML = '<p style="text-align: center; opacity: 0.7; color: #ef4444;">⚠️ Unable to load leaderboard.<br>Make sure the backend server is running.</p>';
+        console.error('❌ Leaderboard error:', error);
+        container.innerHTML = '<p style="text-align: center; opacity: 0.7; color: #ef4444;">⚠️ Unable to load leaderboard.<br>Backend server offline or CORS issue.<br>Check console for details.</p>';
     }
 }
 
@@ -215,13 +243,20 @@ async function loadUserRank() {
 // === REFERRAL SYSTEM ===
 function getReferralLink() {
     if (!tg || !currentUserId) return null;
-    const botUsername = 'NeonGamessBot'; // TODO: Replace with your actual bot username
+    const botUsername = 'NeonGamessBot';
     return `https://t.me/${botUsername}?start=ref_${currentUserId}`;
 }
 
 function shareReferral() {
+    console.log('🎁 === SHARE REFERRAL CALLED ===');
+    console.log('tg exists:', !!tg);
+    console.log('currentUserId:', currentUserId);
+
     const link = getReferralLink();
+    console.log('Generated link:', link);
+
     if (!link) {
+        console.warn('⚠️ No referral link - missing tg or userId');
         showNotification('⚠️ Referral not available');
         return;
     }
@@ -229,11 +264,17 @@ function shareReferral() {
     const text = `🎮 Join Neon Clicker and get 50,000 bonus coins! I'll get 100,000 too!\n${link}`;
 
     if (tg) {
+        console.log('📱 Opening Telegram share dialog...');
         tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+        showNotification('✅ Share dialog opened!');
     } else {
-        // Copy to clipboard
+        console.log('📋 Copying to clipboard (not in Telegram)...');
         navigator.clipboard.writeText(link).then(() => {
-            showNotification('📋 Link copied!');
+            console.log('✅ Copied successfully');
+            showNotification('📋 Link copied to clipboard!');
+        }).catch(err => {
+            console.error('Clipboard error:', err);
+            alert(`Copy this referral link:\n\n${link}`);
         });
     }
 }
@@ -292,29 +333,31 @@ function animateCoinCounter(newValue) {
                 displayedCoins += diff * 0.15; // Smooth animation
             }
 
-            document.getElementById('main-score').textContent = formatNumber(Math.floor(displayedCoins));
-            document.getElementById('header-coins').textContent = formatNumber(Math.floor(displayedCoins));
+            const mainScore = document.getElementById('main-score');
+            const headerCoins = document.getElementById('header-coins');
+            if (mainScore) mainScore.textContent = formatNumber(Math.floor(displayedCoins));
+            if (headerCoins) headerCoins.textContent = formatNumber(Math.floor(displayedCoins));
         }, 16); // 60 FPS
     }
 }
 
 // Override updateAllUI to use animated counter
 const originalUpdateAllUI = window.updateAllUI;
-window.updateAllUI = function () {
-    if (originalUpdateAllUI) {
+if (originalUpdateAllUI) {
+    window.updateAllUI = function () {
         originalUpdateAllUI();
-    }
-    animateCoinCounter(gameState.coins);
-};
+        animateCoinCounter(gameState.coins);
+    };
+}
 
 // === INITIALIZATION ===
 function initBackendIntegration() {
-    console.log('🚀 Initializing backend integration...');
+    console.log('🚀 === BACKEND INTEGRATION INIT ===');
 
     if (tg) {
         tg.ready();
         currentUserId = tg.initDataUnsafe?.user?.id?.toString();
-        console.log('👤 User ID:', currentUserId);
+        console.log('👤 Telegram User ID:', currentUserId);
 
         // Load from cloud first
         loadFromCloud().then(loaded => {
@@ -341,11 +384,16 @@ function initBackendIntegration() {
     // Attach leaderboard listener (works both in Telegram and browser)
     setTimeout(() => {
         const tabBtns = document.querySelectorAll('.tab-btn');
+        console.log('🔍 Found', tabBtns.length, 'tab buttons');
+
         tabBtns.forEach(btn => {
-            if (btn.textContent.includes('Leaderboard')) {
+            const btnText = btn.textContent.trim();
+            console.log('Tab button:', btnText);
+
+            if (btnText.includes('Leaderboard')) {
                 console.log('✅ Leaderboard tab found, attaching listener');
                 btn.addEventListener('click', () => {
-                    console.log('🏆 Leaderboard tab clicked');
+                    console.log('🏆 Leaderboard tab clicked!');
                     setTimeout(loadLeaderboard, 100);
                 });
             }
@@ -362,9 +410,17 @@ window.BackendIntegration = {
     closeDailyRewardModal
 };
 
-// Expose globally for HTML onclick handlers
+// CRITICAL: Expose globally for HTML onclick handlers
+console.log('📢 Exposing functions globally...');
 window.shareReferral = shareReferral;
 window.closeDailyRewardModal = closeDailyRewardModal;
+window.loadLeaderboard = loadLeaderboard;
+
+console.log('✅ window.shareReferral:', typeof window.shareReferral);
+console.log('✅ window.closeDailyRewardModal:', typeof window.closeDailyRewardModal);
+console.log('✅ window.loadLeaderboard:', typeof window.loadLeaderboard);
 
 // Auto-init
 window.addEventListener('DOMContentLoaded', initBackendIntegration);
+
+console.log('=== BACKEND INTEGRATION LOADED ===');
