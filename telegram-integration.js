@@ -5,6 +5,9 @@
 
 const tg = window.Telegram?.WebApp;
 
+// Expose globally for other scripts
+window.tg = tg;
+
 // Backend URL is now declared in backend-integration.js to avoid conflicts
 // Access it via window if needed in this file
 

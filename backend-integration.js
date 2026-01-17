@@ -29,7 +29,9 @@ window.BACKEND_URL = BACKEND_URL;
 
 console.log('📡 BACKEND_URL:', BACKEND_URL);
 
-const tg = window.Telegram?.WebApp;
+// Use tg from telegram-integration.js (loaded first)
+// telegram-integration.js exposes: window.tg = window.Telegram?.WebApp
+const tg = window.tg;
 let currentUserId = null;
 
 // === CLOUD SAVE SYSTEM ===
