@@ -54,51 +54,55 @@ async function purchaseWithStars(itemId, starsAmount) {
         return simulatePurchase(itemId);
     }
 
-    try {
-        // Chiamata al backend per creare l'invoice
-        console.log(`📡 Chiamata a ${BACKEND_URL}/api/create-invoice`);
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Chiamata al backend per creare l'invoice
+            console.log(`📡 Chiamata a ${BACKEND_URL}/api/create-invoice`);
 
-        const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': 'true'
-            },
-            body: JSON.stringify({
-                price: starsAmount,
-                payload: itemId,
-                title: itemId,
-                description: 'Acquisto gioco'
-            })
-        });
+            const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                },
+                body: JSON.stringify({
+                    price: starsAmount,
+                    payload: itemId,
+                    title: itemId,
+                    description: 'Acquisto gioco'
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error(`Errore HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Invoice ricevuta:', data);
-
-        // Apri il pagamento Telegram
-        tg.openInvoice(data.url, (status) => {
-            if (status === 'paid') {
-                console.log('✅ Pagamento completato con successo!');
-                showNotification('✅ Acquisto completato!');
-                // Qui puoi chiamare una funzione per consegnare l'item
-                // deliverPremiumItem(itemId);
-            } else if (status === 'cancelled') {
-                console.log('❌ Pagamento annullato dall\'utente');
-                showNotification('❌ Pagamento annullato');
-            } else {
-                console.log('⚠️ Stato pagamento sconosciuto:', status);
-                showNotification('⚠️ Stato pagamento non chiaro');
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`);
             }
-        });
 
-    } catch (error) {
-        console.error('❌ Errore durante il pagamento:', error);
-        showNotification('❌ Errore pagamento: ' + error.message);
-    }
+            const data = await response.json();
+            console.log('✅ Invoice ricevuta:', data);
+
+            // Apri il pagamento Telegram
+            tg.openInvoice(data.url, (status) => {
+                if (status === 'paid') {
+                    console.log('✅ Pagamento completato con successo!');
+                    showNotification('✅ Acquisto completato!');
+                    resolve(); // ✅ Risolvi SOLO se pagato
+                } else if (status === 'cancelled') {
+                    console.log('❌ Pagamento annullato dall\'utente');
+                    showNotification('❌ Pagamento annullato');
+                    reject(new Error('Payment cancelled')); // ❌ Rifiuta se annullato
+                } else {
+                    console.log('⚠️ Stato pagamento sconosciuto:', status);
+                    showNotification('⚠️ Stato pagamento non chiaro');
+                    reject(new Error('Payment status unknown'));
+                }
+            });
+
+        } catch (error) {
+            console.error('❌ Errore durante il pagamento:', error);
+            showNotification('❌ Errore pagamento: ' + error.message);
+            reject(error);
+        }
+    });
 }
 
 function simulatePurchase(itemId) {

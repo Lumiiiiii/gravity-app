@@ -145,16 +145,29 @@ function closeDailyRewardModal() {
 
 // === LEADERBOARD ===
 async function loadLeaderboard() {
+    const container = document.getElementById('leaderboard-list');
+    if (!container) return;
+
     try {
+        console.log('Loading leaderboard from:', `${BACKEND_URL}/api/leaderboard`);
+
         const response = await fetch(`${BACKEND_URL}/api/leaderboard`, {
             headers: {
                 'ngrok-skip-browser-warning': 'true'
             }
         });
-        const leaderboard = await response.json();
 
-        const container = document.getElementById('leaderboard-list');
-        if (!container) return;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const leaderboard = await response.json();
+        console.log('Leaderboard loaded:', leaderboard.length, 'players');
+
+        if (leaderboard.length === 0) {
+            container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No players yet. Be the first!</p>';
+            return;
+        }
 
         container.innerHTML = leaderboard.map(player => `
             <div class="leaderboard-item ${player.rank <= 3 ? 'top-' + player.rank : ''}">
@@ -173,6 +186,7 @@ async function loadLeaderboard() {
         }
     } catch (error) {
         console.error('Leaderboard error:', error);
+        container.innerHTML = '<p style="text-align: center; opacity: 0.7; color: #ef4444;">⚠️ Unable to load leaderboard.<br>Make sure the backend server is running.</p>';
     }
 }
 
@@ -201,7 +215,7 @@ async function loadUserRank() {
 // === REFERRAL SYSTEM ===
 function getReferralLink() {
     if (!tg || !currentUserId) return null;
-    const botUsername = 'YourBotUsername'; // TODO: Replace with your bot username
+    const botUsername = 'NeonGamessBot'; // TODO: Replace with your actual bot username
     return `https://t.me/${botUsername}?start=ref_${currentUserId}`;
 }
 
@@ -337,6 +351,10 @@ window.BackendIntegration = {
     shareReferral,
     closeDailyRewardModal
 };
+
+// Expose globally for HTML onclick handlers
+window.shareReferral = shareReferral;
+window.closeDailyRewardModal = closeDailyRewardModal;
 
 // Auto-init
 window.addEventListener('DOMContentLoaded', initBackendIntegration);
