@@ -17,7 +17,10 @@ let gameState = {
         critChance: { level: 0, baseCost: 100, costMultiplier: 1.8 },
         multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0 },
         comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 },
-        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 }
+        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 },
+        luckBoost: { level: 0, baseCost: 1500, costMultiplier: 2.2 },
+        speedClick: { level: 0, baseCost: 3000, costMultiplier: 2.8 },
+        megaMultiplier: { level: 0, baseCost: 5000, costMultiplier: 3.0 }
     },
 
     // Skins
@@ -79,6 +82,24 @@ const SKINS = {
         emoji: '💖',
         particles: false
     },
+    'electric-violet': {
+        name: 'Electric Violet',
+        rarity: 'common',
+        cost: 75000,
+        color: '#8b5cf6',
+        shadow: 'rgba(139, 92, 246, 0.6)',
+        emoji: '⚡',
+        particles: false
+    },
+    'ocean-breeze': {
+        name: 'Ocean Breeze',
+        rarity: 'common',
+        cost: 90000,
+        color: '#06b6d4',
+        shadow: 'rgba(6, 182, 212, 0.6)',
+        emoji: '🌊',
+        particles: false
+    },
 
     // RARE (100k - 500k)
     'gold-rush': {
@@ -121,6 +142,26 @@ const SKINS = {
         particles: true,
         particleColor: '#ef4444'
     },
+    'solar-flare': {
+        name: 'Solar Flare',
+        rarity: 'rare',
+        cost: 650000,
+        color: '#fb923c',
+        shadow: 'rgba(251, 146, 60, 0.7)',
+        emoji: '☀️',
+        particles: true,
+        particleColor: '#fdba74'
+    },
+    'midnight-shadow': {
+        name: 'Midnight Shadow',
+        rarity: 'rare',
+        cost: 800000,
+        color: '#6366f1',
+        shadow: 'rgba(99, 102, 241, 0.7)',
+        emoji: '🌙',
+        particles: true,
+        particleColor: '#818cf8'
+    },
 
     // EPIC (1M - 5M)
     'aurora': {
@@ -144,6 +185,28 @@ const SKINS = {
         emoji: '🔥',
         particles: true,
         particleColor: '#fb923c'
+    },
+    'dragon-soul': {
+        name: 'Dragon Soul',
+        rarity: 'epic',
+        cost: 3500000,
+        color: '#dc2626',
+        shadow: 'rgba(220, 38, 38, 0.9)',
+        gradient: 'linear-gradient(45deg, #dc2626, #f97316, #fbbf24)',
+        emoji: '🐲',
+        particles: true,
+        particleColor: '#f87171'
+    },
+    'ice-crystal': {
+        name: 'Ice Crystal',
+        rarity: 'epic',
+        cost: 4000000,
+        color: '#0ea5e9',
+        shadow: 'rgba(14, 165, 233, 0.9)',
+        gradient: 'linear-gradient(45deg, #0ea5e9, #06b6d4, #ecfeff)',
+        emoji: '❄️',
+        particles: true,
+        particleColor: '#38bdf8'
     },
     'galaxy': {
         name: 'Galaxy Burst',
@@ -217,12 +280,39 @@ function saveGameState() {
 function loadGameState() {
     const saved = localStorage.getItem('neonClickerSave');
     if (saved) {
-        const loaded = JSON.parse(saved);
-        gameState = { ...gameState, ...loaded };
+        try {
+            const loaded = JSON.parse(saved);
 
-        // Recalculate time-based things
-        if (gameState.premiumBoosts.multiplier24hExpiry < Date.now()) {
-            gameState.premiumBoosts.multiplier24h = false;
+            // CRITICAL: Merge saved data carefully to avoid overriding defaults
+            gameState.coins = loaded.coins || 0;
+            gameState.totalCoinsEarned = loaded.totalCoinsEarned || 0;
+            gameState.totalClicks = loaded.totalClicks || 0;
+            gameState.prestigeLevel = loaded.prestigeLevel || 0;
+            gameState.prestigePoints = loaded.prestigePoints || 0;
+            gameState.ownedSkins = loaded.ownedSkins || ['default'];
+            gameState.equippedSkin = loaded.equippedSkin || 'default';
+            gameState.highestCombo = loaded.highestCombo || 1;
+            gameState.startTime = loaded.startTime || Date.now();
+
+            // Merge upgrades (preserve new upgrades if they don't exist in save)
+            if (loaded.upgrades) {
+                for (const [key, value] of Object.entries(loaded.upgrades)) {
+                    if (gameState.upgrades[key]) {
+                        gameState.upgrades[key].level = value.level;
+                    }
+                }
+            }
+
+            // Premium boosts
+            if (loaded.premiumBoosts) {
+                gameState.premiumBoosts = loaded.premiumBoosts;
+                if (gameState.premiumBoosts.multiplier24hExpiry < Date.now()) {
+                    gameState.premiumBoosts.multiplier24h = false;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading save:', error);
+            // If parse error, reset to defaults
         }
     }
 }
@@ -336,12 +426,15 @@ function getAutoClickerPower() {
 }
 
 function getCritChance() {
-    return Math.min(0.5, gameState.upgrades.critChance.level * 0.02); // Max 50%
+    const base = gameState.upgrades.critChance.level * 0.02;
+    const luck = gameState.upgrades.luckBoost.level * 0.03; // New luck upgrade
+    return Math.min(0.75, base + luck); // Max 75%
 }
 
 function getGlobalMultiplier() {
     let multi = 1;
     multi += gameState.upgrades.multiplier.level * 0.1;
+    multi += gameState.upgrades.megaMultiplier.level * 0.15; // New upgrade
     multi += gameState.prestigePoints * 0.1; // 10% per prestige point
     if (gameState.premiumBoosts.multiplier24h) multi *= 2;
     return multi;
@@ -524,17 +617,15 @@ function buyPremiumItem(itemId) {
     currentPremiumItem = itemId;
 
     const items = {
-        'starter': { name: 'Starter Pack', stars: 50, coins: 1000000, skin: 'random-common' },
-        'megaboost': { name: 'Mega Boost', stars: 100, effect: '24h-2x' },
-        'legendary': { name: 'Legendary Pack', stars: 200, skins: ['rainbow', 'cosmic'] },
-        'prestige': { name: 'Prestige Booster', stars: 150, prestigePoints: 5 },
-        'ultimate': { name: 'Ultimate Bundle', stars: 500, all: true }
+        'coinbooster': { name: '💰 Coin Booster', stars: 10, coins: 1000000 },
+        'starter': { name: '🌟 Starter Pack', stars: 25, coins: 1000000, skin: 'random-common' },
+        'megaboost': { name: '⚡ Mega Boost', stars: 50, effect: '24h-2x' },
+        'legendary': { name: '💫 Legendary Pack', stars: 100, skins: ['rainbow', 'cosmic'] },
+        'prestige': { name: '🎆 Prestige Booster', stars: 75, prestigePoints: 5 },
+        'ultimate': { name: '🔥 Ultimate Bundle', stars: 250, all: true }
     };
 
     const item = items[itemId];
-
-    // DEBUG: Alert per vedere se funziona
-    alert(`🚀 Versione NUOVA! Chiamo il server per: ${item.name} (${item.stars} Stars)`);
 
     // Chiama la funzione REALE dal telegram-integration.js
     if (window.TelegramIntegration && window.TelegramIntegration.purchaseWithStars) {

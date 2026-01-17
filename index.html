@@ -161,6 +161,39 @@
                         </div>
                     </div>
 
+                    <div class="upgrade-item" onclick="buyUpgrade('luckBoost')">
+                        <div class="upgrade-icon">🍀</div>
+                        <div class="upgrade-info">
+                            <h4>Luck Boost</h4>
+                            <p>Level: <span id="level-luckBoost">0</span></p>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="cost-luckBoost">1500</span> 🪙
+                        </div>
+                    </div>
+
+                    <div class="upgrade-item" onclick="buyUpgrade('speedClick')">
+                        <div class="upgrade-icon">⚡</div>
+                        <div class="upgrade-info">
+                            <h4>Speed Click</h4>
+                            <p>Level: <span id="level-speedClick">0</span></p>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="cost-speedClick">3000</span> 🪙
+                        </div>
+                    </div>
+
+                    <div class="upgrade-item" onclick="buyUpgrade('megaMultiplier')">
+                        <div class="upgrade-icon">💰</div>
+                        <div class="upgrade-info">
+                            <h4>Mega Multiplier</h4>
+                            <p>Level: <span id="level-megaMultiplier">0</span></p>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="cost-megaMultiplier">5000</span> 🪙
+                        </div>
+                    </div>
+
                     <button class="prestige-button" onclick="attemptPrestige()" id="prestige-btn">
                         ⭐ PRESTIGE ⭐
                         <span class="prestige-hint">Unlock at 100M coins</span>
@@ -193,10 +226,18 @@
                     <h3>💎 Premium Shop</h3>
                     <p class="premium-desc">Purchase with Telegram Stars</p>
 
+                    <div class="premium-item" onclick="buyPremiumItem('coinbooster')">
+                        <div class="premium-header">
+                            <h4>💰 Coin Booster</h4>
+                            <span class="stars-cost">10 ⭐</span>
+                        </div>
+                        <p>1,000,000 Coins</p>
+                    </div>
+
                     <div class="premium-item" onclick="buyPremiumItem('starter')">
                         <div class="premium-header">
                             <h4>🌟 Starter Pack</h4>
-                            <span class="stars-cost">50 ⭐</span>
+                            <span class="stars-cost">25 ⭐</span>
                         </div>
                         <p>1M Coins + Random Common Skin</p>
                     </div>
@@ -204,7 +245,7 @@
                     <div class="premium-item" onclick="buyPremiumItem('megaboost')">
                         <div class="premium-header">
                             <h4>⚡ Mega Boost</h4>
-                            <span class="stars-cost">100 ⭐</span>
+                            <span class="stars-cost">50 ⭐</span>
                         </div>
                         <p>2x Multiplier for 24 hours</p>
                     </div>
@@ -212,7 +253,7 @@
                     <div class="premium-item" onclick="buyPremiumItem('legendary')">
                         <div class="premium-header">
                             <h4>💫 Legendary Pack</h4>
-                            <span class="stars-cost">200 ⭐</span>
+                            <span class="stars-cost">100 ⭐</span>
                         </div>
                         <p>3 Exclusive Legendary Skins</p>
                     </div>
@@ -220,7 +261,7 @@
                     <div class="premium-item" onclick="buyPremiumItem('prestige')">
                         <div class="premium-header">
                             <h4>🎆 Prestige Booster</h4>
-                            <span class="stars-cost">150 ⭐</span>
+                            <span class="stars-cost">75 ⭐</span>
                         </div>
                         <p>+5 Instant Prestige Points</p>
                     </div>
@@ -228,7 +269,7 @@
                     <div class="premium-item ultimate" onclick="buyPremiumItem('ultimate')">
                         <div class="premium-header">
                             <h4>🔥 Ultimate Bundle</h4>
-                            <span class="stars-cost">500 ⭐</span>
+                            <span class="stars-cost">250 ⭐</span>
                         </div>
                         <p>All Boosts + 10M Coins + Legendary Skins</p>
                     </div>
