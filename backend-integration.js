@@ -309,6 +309,8 @@ window.updateAllUI = function () {
 
 // === INITIALIZATION ===
 function initBackendIntegration() {
+    console.log('🚀 Initializing backend integration...');
+
     if (tg) {
         tg.ready();
         currentUserId = tg.initDataUnsafe?.user?.id?.toString();
@@ -331,16 +333,24 @@ function initBackendIntegration() {
 
         // Auto-save to cloud every 30 seconds
         setInterval(saveToCloud, 30000);
-
-        // Load leaderboard on tab switch
-        const leaderboardTab = document.querySelector('[onclick*="leaderboard"]');
-        if (leaderboardTab) {
-            leaderboardTab.addEventListener('click', loadLeaderboard);
-        }
     } else {
         console.log('⚠️ Not in Telegram, using local storage only');
         currentUserId = 'local-user';
     }
+
+    // Attach leaderboard listener (works both in Telegram and browser)
+    setTimeout(() => {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            if (btn.textContent.includes('Leaderboard')) {
+                console.log('✅ Leaderboard tab found, attaching listener');
+                btn.addEventListener('click', () => {
+                    console.log('🏆 Leaderboard tab clicked');
+                    setTimeout(loadLeaderboard, 100);
+                });
+            }
+        });
+    }, 500);
 }
 
 // === EXPORTS ===

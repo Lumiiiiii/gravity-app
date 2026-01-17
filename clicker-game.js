@@ -406,6 +406,17 @@ function buyUpgrade(upgradeType) {
 
         showNotification(`✅ ${upgradeType} upgraded to level ${upgrade.level}!`);
         updateAllUI();
+
+        // Remove 'affordable' class temporarily and re-add after UI update
+        const upgradeEl = document.querySelector(`[onclick="buyUpgrade('${upgradeType}')"]`);
+        if (upgradeEl) {
+            upgradeEl.classList.remove('affordable');
+            // Flash effect
+            upgradeEl.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                upgradeEl.style.transform = '';
+            }, 200);
+        }
     } else {
         showNotification('❌ Not enough coins!');
     }
