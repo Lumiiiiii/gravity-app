@@ -31,7 +31,7 @@ console.log('📡 BACKEND_URL:', BACKEND_URL);
 
 // Use tg from telegram-integration.js (loaded first)
 // telegram-integration.js exposes: window.tg = window.Telegram?.WebApp
-const tg = window.tg;
+const tgApp = window.tg;
 let currentUserId = null;
 
 // === CLOUD SAVE SYSTEM ===
@@ -47,8 +47,8 @@ async function saveToCloud() {
             },
             body: JSON.stringify({
                 telegramId: currentUserId,
-                username: tg?.initDataUnsafe?.user?.username,
-                firstName: tg?.initDataUnsafe?.user?.first_name,
+                username: tgApp?.initDataUnsafe?.user?.username,
+                firstName: tgApp?.initDataUnsafe?.user?.first_name,
                 gameState: {
                     coins: gameState.coins,
                     totalCoinsEarned: gameState.totalCoinsEarned,
@@ -247,14 +247,14 @@ async function loadUserRank() {
 
 // === REFERRAL SYSTEM ===
 function getReferralLink() {
-    if (!tg || !currentUserId) return null;
+    if (!tgApp || !currentUserId) return null;
     const botUsername = 'NeonGamessBot';
     return `https://t.me/${botUsername}?start=ref_${currentUserId}`;
 }
 
 function shareReferral() {
     console.log('🎁 === SHARE REFERRAL CALLED ===');
-    console.log('tg exists:', !!tg);
+    console.log('tg exists:', !!tgApp);
     console.log('currentUserId:', currentUserId);
 
     const link = getReferralLink();
@@ -268,9 +268,9 @@ function shareReferral() {
 
     const text = `🎮 Join Neon Clicker and get 50,000 bonus coins! I'll get 100,000 too!\n${link}`;
 
-    if (tg) {
+    if (tgApp) {
         console.log('📱 Opening Telegram share dialog...');
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+        tgApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
         showNotification('✅ Share dialog opened!');
     } else {
         console.log('📋 Copying to clipboard (not in Telegram)...');
@@ -285,9 +285,9 @@ function shareReferral() {
 }
 
 async function checkReferral() {
-    if (!tg || !currentUserId) return;
+    if (!tgApp || !currentUserId) return;
 
-    const startParam = tg.initDataUnsafe?.start_param;
+    const startParam = tgApp.initDataUnsafe?.start_param;
     if (startParam && startParam.startsWith('ref_')) {
         const referrerId = startParam.replace('ref_', '');
 
@@ -359,9 +359,9 @@ if (originalUpdateAllUI) {
 function initBackendIntegration() {
     console.log('🚀 === BACKEND INTEGRATION INIT ===');
 
-    if (tg) {
-        tg.ready();
-        currentUserId = tg.initDataUnsafe?.user?.id?.toString();
+    if (tgApp) {
+        tgApp.ready();
+        currentUserId = tgApp.initDataUnsafe?.user?.id?.toString();
         console.log('👤 Telegram User ID:', currentUserId);
 
         // Load from cloud first
