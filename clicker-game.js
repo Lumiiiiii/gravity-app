@@ -522,10 +522,6 @@ let currentPremiumItem = null;
 
 function buyPremiumItem(itemId) {
     currentPremiumItem = itemId;
-    const modal = document.getElementById('premium-modal');
-    const title = document.getElementById('premium-modal-title');
-    const desc = document.getElementById('premium-modal-desc');
-    const confirmBtn = document.getElementById('premium-confirm-btn');
 
     const items = {
         'starter': { name: 'Starter Pack', stars: 50, coins: 1000000, skin: 'random-common' },
@@ -536,17 +532,30 @@ function buyPremiumItem(itemId) {
     };
 
     const item = items[itemId];
-    title.textContent = `${item.name}`;
-    desc.textContent = `Cost: ${item.stars} Telegram Stars ⭐\n\n(Testing mode - click to simulate purchase)`;
 
-    confirmBtn.onclick = () => processPremiumPurchase(itemId, item);
+    // DEBUG: Alert per vedere se funziona
+    alert(`🚀 Versione NUOVA! Chiamo il server per: ${item.name} (${item.stars} Stars)`);
 
-    modal.classList.remove('hidden');
+    // Chiama la funzione REALE dal telegram-integration.js
+    if (window.TelegramIntegration && window.TelegramIntegration.purchaseWithStars) {
+        window.TelegramIntegration.purchaseWithStars(itemId, item.stars)
+            .then(() => {
+                // Se il pagamento va a buon fine, consegna l'item
+                deliverPremiumItem(itemId, item);
+            })
+            .catch(error => {
+                console.error('Errore pagamento:', error);
+                showNotification('❌ Errore durante il pagamento');
+            });
+    } else {
+        alert('⚠️ Telegram Integration non trovato! File non caricato?');
+        showNotification('⚠️ Sistema di pagamento non disponibile');
+    }
 }
 
-function processPremiumPurchase(itemId, item) {
-    // Simulate Telegram Stars purchase
-    showNotification(`✨ Premium purchase simulated: ${item.name}`);
+function deliverPremiumItem(itemId, item) {
+    // Consegna gli item dopo pagamento confermato
+    showNotification(`✨ Acquisto completato: ${item.name}!`);
 
     if (item.coins) {
         gameState.coins += item.coins;
@@ -595,7 +604,6 @@ function processPremiumPurchase(itemId, item) {
         showNotification('🔥 ULTIMATE BUNDLE ACTIVATED!');
     }
 
-    closePremiumModal();
     updateAllUI();
     renderAllSkins();
 }
