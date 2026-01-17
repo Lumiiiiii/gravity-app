@@ -398,6 +398,20 @@ function initBackendIntegration() {
                 });
             }
         });
+
+        // Update status in UI if elements exist
+        const statusEl = document.getElementById('backend-status');
+        const userIdEl = document.getElementById('user-id-display');
+
+        if (statusEl) {
+            statusEl.textContent = '✅ Loaded';
+            statusEl.style.color = '#22c55e';
+        }
+
+        if (userIdEl && currentUserId) {
+            userIdEl.textContent = currentUserId;
+        }
+
     }, 500);
 }
 

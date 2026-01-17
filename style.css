@@ -685,6 +685,11 @@ body::before {
     transform: translateX(5px);
 }
 
+.upgrade-item:active {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(0.98);
+}
+
 .upgrade-item.affordable {
     border-color: var(--accent-gold);
     box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
