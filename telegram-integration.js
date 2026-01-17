@@ -5,6 +5,9 @@
 
 const tg = window.Telegram?.WebApp;
 
+// Backend URL per i pagamenti Telegram Stars
+const BACKEND_URL = 'https://unremembered-gilda-nonrepressed.ngrok-free.dev';
+
 function initTelegramWebApp() {
     if (tg) {
         tg.ready();
@@ -44,43 +47,56 @@ function initTelegramWebApp() {
  */
 
 async function purchaseWithStars(itemId, starsAmount) {
-    console.log(`[SIMULATED] Purchasing ${itemId} for ${starsAmount} Stars`);
+    console.log(`💳 Avvio acquisto: ${itemId} per ${starsAmount} Stars`);
 
     if (!tg) {
-        console.warn('Not in Telegram environment - simulating purchase');
+        console.warn('⚠️ Non in ambiente Telegram - simulazione acquisto');
         return simulatePurchase(itemId);
     }
 
     try {
-        // In production, this would be:
-        // const response = await fetch('/api/create-invoice', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({
-        //         item: itemId,
-        //         stars: starsAmount,
-        //         userId: tg.initDataUnsafe.user.id
-        //     })
-        // });
-        // 
-        // const { invoiceLink } = await response.json();
-        // 
-        // tg.openInvoice(invoiceLink, (status) => {
-        //     if (status === 'paid') {
-        //         // Payment successful
-        //         console.log('✅ Payment successful!');
-        //         deliverPremiumItem(itemId);
-        //     } else {
-        //         console.log('❌ Payment cancelled or failed');
-        //     }
-        // });
+        // Chiamata al backend per creare l'invoice
+        console.log(`📡 Chiamata a ${BACKEND_URL}/api/create-invoice`);
 
-        // For testing, simulate
-        return simulatePurchase(itemId);
+        const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                price: starsAmount,
+                payload: itemId,
+                title: itemId,
+                description: 'Acquisto gioco'
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Errore HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Invoice ricevuta:', data);
+
+        // Apri il pagamento Telegram
+        tg.openInvoice(data.url, (status) => {
+            if (status === 'paid') {
+                console.log('✅ Pagamento completato con successo!');
+                showNotification('✅ Acquisto completato!');
+                // Qui puoi chiamare una funzione per consegnare l'item
+                // deliverPremiumItem(itemId);
+            } else if (status === 'cancelled') {
+                console.log('❌ Pagamento annullato dall\'utente');
+                showNotification('❌ Pagamento annullato');
+            } else {
+                console.log('⚠️ Stato pagamento sconosciuto:', status);
+                showNotification('⚠️ Stato pagamento non chiaro');
+            }
+        });
 
     } catch (error) {
-        console.error('Payment error:', error);
-        showNotification('❌ Payment failed!');
+        console.error('❌ Errore durante il pagamento:', error);
+        showNotification('❌ Errore pagamento: ' + error.message);
     }
 }
 
