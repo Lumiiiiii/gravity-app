@@ -88,6 +88,7 @@
                     <button class="tab-btn active" onclick="switchTab('upgrades')">⚡ Upgrades</button>
                     <button class="tab-btn" onclick="switchTab('skins')">🎨 Skins</button>
                     <button class="tab-btn" onclick="switchTab('premium')">💎 Premium</button>
+                    <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
                     <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
                 </div>
 
@@ -300,14 +301,29 @@
                     <div class="stat-row">
                         <span class="stat-name">Skins Owned:</span>
                         <span class="stat-stat"><span id="stat-skins-owned">1</span>/<span
-                                id="stat-skins-total">15</span></span>
+                                id="stat-skins-total">21</span></span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-name">Time Played:</span>
                         <span class="stat-stat" id="stat-time-played">0m</span>
                     </div>
 
+                    <button class="primary-btn" onclick="shareReferral()" style="margin-top: 20px;">🎁 Invite
+                        Friends</button>
+                    <p style="text-align: center; font-size: 12px; opacity: 0.7; margin-top: 10px;">Get 100k coins per
+                        friend!</p>
+
                     <button class="danger-btn" onclick="confirmReset()">🗑️ Reset Progress</button>
+                </div>
+
+                <!-- LEADERBOARD TAB -->
+                <div class="tab-content" id="tab-leaderboard">
+                    <h3>🏆 Global Leaderboard</h3>
+                    <p id="user-rank" style="text-align: center; margin-bottom: 15px; color: #fbbf24;">Your Rank:
+                        Loading...</p>
+                    <div id="leaderboard-list" class="leaderboard-container">
+                        <p style="text-align: center; opacity: 0.7;">Loading...</p>
+                    </div>
                 </div>
             </aside>
         </main>
@@ -348,6 +364,29 @@
         </div>
     </div>
 
+    <!-- DAILY REWARD MODAL -->
+    <div id="daily-reward-modal" class="modal hidden">
+        <div class="modal-content prestige-modal-content">
+            <div class="prestige-icon">🎁</div>
+            <h2>DAILY REWARD!</h2>
+            <p>You earned:</p>
+            <div class="prestige-rewards">
+                <div class="reward-item">
+                    <span class="reward-label">Coins:</span>
+                    <span class="reward-value" id="daily-reward-amount">+10,000</span>
+                </div>
+                <div class="reward-item">
+                    <span class="reward-label">Streak:</span>
+                    <span class="reward-value">Day <span id="daily-streak">1</span></span>
+                </div>
+            </div>
+            <p style="font-size: 13px; opacity: 0.8; margin-top: 10px;">Come back tomorrow for more!</p>
+            <div class="modal-actions">
+                <button class="prestige-confirm-btn" onclick="closeDailyRewardModal()">✨ CLAIM</button>
+            </div>
+        </div>
+    </div>
+
     <!-- NOTIFICATION TOAST -->
     <div id="notification-toast" class="notification-toast">
         <span id="notification-text"></span>
@@ -356,6 +395,7 @@
     <!-- SCRIPTS -->
     <script src="clicker-game.js"></script>
     <script src="telegram-integration.js"></script>
+    <script src="backend-integration.js"></script>
 </body>
 
 </html>
