@@ -604,56 +604,66 @@ function closePremiumModal() {
     document.getElementById('premium-modal').classList.add('hidden');
 }
 
-// === UI UPDATES ===
+// === UI UPDATES (OPTIMIZED) ===
 function updateAllUI() {
-    // Header
-    document.getElementById('header-coins').textContent = formatNumber(gameState.coins);
-    document.getElementById('header-prestige').textContent = gameState.prestigeLevel;
+    // Batch DOM updates for better performance
+    requestAnimationFrame(() => {
+        // Header
+        document.getElementById('header-coins').textContent = formatNumber(gameState.coins);
+        document.getElementById('header-prestige').textContent = gameState.prestigeLevel;
 
-    // Main score
-    document.getElementById('main-score').textContent = formatNumber(gameState.coins);
-    document.getElementById('cps-display').textContent = formatNumber(getAutoClickerPower());
+        // Main score
+        document.getElementById('main-score').textContent = formatNumber(gameState.coins);
+        document.getElementById('cps-display').textContent = formatNumber(getAutoClickerPower());
 
-    // Stats mini
-    document.getElementById('stat-power').textContent = Math.floor(getClickPower());
-    document.getElementById('stat-crit').textContent = `${Math.floor(getCritChance() * 100)}%`;
-    document.getElementById('stat-multi').textContent = getGlobalMultiplier().toFixed(1);
+        // Stats mini
+        document.getElementById('stat-power').textContent = Math.floor(getClickPower());
+        document.getElementById('stat-crit').textContent = `${Math.floor(getCritChance() * 100)}%`;
+        document.getElementById('stat-multi').textContent = getGlobalMultiplier().toFixed(1);
 
-    // Upgrades
-    for (const [type, upgrade] of Object.entries(gameState.upgrades)) {
-        const levelEl = document.getElementById(`level-${type}`);
-        const costEl = document.getElementById(`cost-${type}`);
+        // Upgrades
+        for (const [type, upgrade] of Object.entries(gameState.upgrades)) {
+            const levelEl = document.getElementById(`level-${type}`);
+            const costEl = document.getElementById(`cost-${type}`);
 
-        if (levelEl) levelEl.textContent = upgrade.level;
-        if (costEl) {
-            const cost = getUpgradeCost(type);
-            costEl.textContent = formatNumber(cost);
+            if (levelEl) levelEl.textContent = upgrade.level;
+            if (costEl) {
+                const cost = getUpgradeCost(type);
+                costEl.textContent = formatNumber(cost);
 
-            // Glow if affordable
-            const upgradeEl = costEl.closest('.upgrade-item');
-            if (gameState.coins >= cost) {
-                upgradeEl.classList.add('affordable');
-            } else {
-                upgradeEl.classList.remove('affordable');
+                // Glow if affordable
+                const upgradeEl = costEl.closest('.upgrade-item');
+                if (upgradeEl) {
+                    if (gameState.coins >= cost) {
+                        upgradeEl.classList.add('affordable');
+                    } else {
+                        upgradeEl.classList.remove('affordable');
+                    }
+                }
             }
         }
-    }
 
-    // Prestige button
-    const prestigeBtn = document.getElementById('prestige-btn');
-    if (gameState.coins >= 100000000) {
-        prestigeBtn.classList.add('available');
-    } else {
-        prestigeBtn.classList.remove('available');
-    }
+        // Prestige button
+        const prestigeBtn = document.getElementById('prestige-btn');
+        if (prestigeBtn) {
+            if (gameState.coins >= 100000000) {
+                prestigeBtn.classList.add('available');
+            } else {
+                prestigeBtn.classList.remove('available');
+            }
+        }
 
-    // Stats
-    document.getElementById('stat-total-clicks').textContent = formatNumber(gameState.totalClicks);
-    document.getElementById('stat-total-coins').textContent = formatNumber(gameState.totalCoinsEarned);
-    document.getElementById('stat-highest-combo').textContent = gameState.highestCombo;
-    document.getElementById('stat-prestige-level').textContent = gameState.prestigeLevel;
-    document.getElementById('stat-skins-owned').textContent = gameState.ownedSkins.length;
-    document.getElementById('stat-skins-total').textContent = Object.keys(SKINS).length;
+        // Stats (only update if stats tab is visible - performance)
+        const statsTab = document.getElementById('tab-stats');
+        if (statsTab && statsTab.classList.contains('active')) {
+            document.getElementById('stat-total-clicks').textContent = formatNumber(gameState.totalClicks);
+            document.getElementById('stat-total-coins').textContent = formatNumber(gameState.totalCoinsEarned);
+            document.getElementById('stat-highest-combo').textContent = gameState.highestCombo;
+            document.getElementById('stat-prestige-level').textContent = gameState.prestigeLevel;
+            document.getElementById('stat-skins-owned').textContent = gameState.ownedSkins.length;
+            document.getElementById('stat-skins-total').textContent = Object.keys(SKINS).length;
+        }
+    });
 }
 
 // === TAB SYSTEM ===
@@ -690,33 +700,110 @@ function animateClickButton() {
     btn.classList.add('pulse');
 }
 
-// === PARTICLE EFFECTS ===
+// === PARTICLE EFFECTS (OPTIMIZED + SKIN-SPECIFIC) ===
 function createParticles(event) {
     const container = document.querySelector('.click-button-container');
     const rect = container.getBoundingClientRect();
 
-    // Get color from current skin or default
+    // Get current skin data
     const currentSkin = SKINS[gameState.equippedSkin];
     const particleColor = currentSkin?.particleColor || currentSkin?.color || '#fca5a5';
+    const rarity = currentSkin?.rarity || 'common';
 
-    // Number of particles based on upgrade level
-    const particleCount = 8 + (gameState.upgrades.particleEffects.level * 2);
+    // Reduced particles for performance: max 8 base + 1 per level
+    const baseCount = rarity === 'legendary' ? 8 : rarity === 'epic' ? 6 : 4;
+    const particleCount = Math.min(baseCount + gameState.upgrades.particleEffects.level, 12);
 
-    // Create particles in all directions
-    for (let i = 0; i < Math.min(particleCount, 16); i++) {
-        const particle = document.createElement('div');
-        particle.className = `particle p${(i % 8) + 1}`;
-        particle.style.backgroundColor = particleColor;
-        particle.style.left = `${event.clientX - rect.left}px`;
-        particle.style.top = `${event.clientY - rect.top}px`;
+    // Create particles
+    requestAnimationFrame(() => {
+        const fragment = document.createDocumentFragment();
 
-        // Add glow effect
-        particle.style.boxShadow = `0 0 10px ${particleColor}`;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = `particle p${(i % 8) + 1}`;
+            particle.style.backgroundColor = particleColor;
+            particle.style.left = `${event.clientX - rect.left}px`;
+            particle.style.top = `${event.clientY - rect.top}px`;
+            particle.style.boxShadow = `0 0 8px ${particleColor}`;
 
-        container.appendChild(particle);
+            fragment.appendChild(particle);
+        }
 
-        // Remove after animation
-        setTimeout(() => particle.remove(), 800);
+        container.appendChild(fragment);
+
+        // Cleanup particles after animation (600ms)
+        setTimeout(() => {
+            const particles = container.querySelectorAll('.particle');
+            particles.forEach(p => p.remove());
+        }, 600);
+    });
+
+    // Add special effects based on rarity
+    if (gameState.upgrades.particleEffects.level > 0) {
+        addSkinSpecificEffect(event, rect, particleColor, rarity);
+    }
+}
+
+// Skin-specific visual effects
+function addSkinSpecificEffect(event, rect, color, rarity) {
+    const container = document.querySelector('.click-button-container');
+
+    // RARE: Subtle ripple
+    if (rarity === 'rare') {
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        ripple.style.borderColor = color;
+        ripple.style.left = `${event.clientX - rect.left - 20}px`;
+        ripple.style.top = `${event.clientY - rect.top - 20}px`;
+        container.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    }
+
+    // EPIC: Double ripple + glow
+    else if (rarity === 'epic') {
+        for (let i = 0; i < 2; i++) {
+            setTimeout(() => {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                ripple.style.borderColor = color;
+                ripple.style.left = `${event.clientX - rect.left - 20}px`;
+                ripple.style.top = `${event.clientY - rect.top - 20}px`;
+                ripple.style.borderWidth = '3px';
+                container.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            }, i * 100);
+        }
+    }
+
+    // LEGENDARY: Screen shake + ripple + intensified glow
+    else if (rarity === 'legendary') {
+        // Screen shake
+        const gameContainer = document.querySelector('.click-zone');
+        if (gameContainer) {
+            gameContainer.classList.add('shake-effect');
+            setTimeout(() => gameContainer.classList.remove('shake-effect'), 300);
+        }
+
+        // Triple ripple
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                ripple.style.borderColor = color;
+                ripple.style.left = `${event.clientX - rect.left - 20}px`;
+                ripple.style.top = `${event.clientY - rect.top - 20}px`;
+                ripple.style.borderWidth = '4px';
+                ripple.style.boxShadow = `0 0 20px ${color}`;
+                container.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            }, i * 80);
+        }
+
+        // Intensify click button glow temporarily
+        const btn = document.getElementById('click-target');
+        const originalShadow = btn.style.boxShadow;
+        btn.style.boxShadow = `0 0 80px ${color}, 0 0 120px ${color}`;
+        setTimeout(() => btn.style.boxShadow = originalShadow, 200);
     }
 }
 

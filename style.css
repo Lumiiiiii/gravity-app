@@ -118,31 +118,26 @@ body::before {
 .neon-text {
     color: #fff;
     text-shadow:
-        0 0 7px #fff,
         0 0 10px #fff,
-        0 0 21px #fff,
-        0 0 42px #0fa,
-        0 0 82px #0fa;
-    animation: neonPulse 2s ease-in-out infinite alternate;
+        0 0 20px #0fa,
+        0 0 40px #0fa;
+    animation: neonPulse 3s ease-in-out infinite alternate;
+    /* Ridotto da 2s a 3s e da 7 shadow a 3 */
 }
 
 @keyframes neonPulse {
     from {
         text-shadow:
             0 0 5px #fff,
-            0 0 10px #fff,
-            0 0 15px #fff,
-            0 0 20px #0fa,
-            0 0 35px #0fa;
+            0 0 15px #0fa,
+            0 0 30px #0fa;
     }
 
     to {
         text-shadow:
             0 0 10px #fff,
-            0 0 20px #fff,
-            0 0 30px #fff,
-            0 0 40px #0fa,
-            0 0 70px #0fa;
+            0 0 25px #0fa,
+            0 0 50px #0fa;
     }
 }
 
@@ -452,144 +447,158 @@ body::before {
     }
 }
 
-/* ========== PARTICLE SYSTEM ========== */
+/* ========== PARTICLE SYSTEM (OPTIMIZED) ========== */
 .particle {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     pointer-events: none;
     opacity: 1;
     z-index: 100;
+    will-change: transform, opacity;
+    /* GPU acceleration */
 }
 
-/* Particle animations - 8 direzioni */
+/* Particle animations - Optimized with transform3d */
 @keyframes particle1 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(60px, -60px) scale(0);
+    to {
+        transform: translate3d(50px, -50px, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle2 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(80px, 0) scale(0);
+    to {
+        transform: translate3d(70px, 0, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle3 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(60px, 60px) scale(0);
+    to {
+        transform: translate3d(50px, 50px, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle4 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(0, 80px) scale(0);
+    to {
+        transform: translate3d(0, 70px, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle5 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-60px, 60px) scale(0);
+    to {
+        transform: translate3d(-50px, 50px, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle6 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-80px, 0) scale(0);
+    to {
+        transform: translate3d(-70px, 0, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle7 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-60px, -60px) scale(0);
+    to {
+        transform: translate3d(-50px, -50px, 0) scale(0);
         opacity: 0;
     }
 }
 
 @keyframes particle8 {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(0, -80px) scale(0);
+    to {
+        transform: translate3d(0, -70px, 0) scale(0);
         opacity: 0;
     }
 }
 
 .particle.p1 {
-    animation: particle1 0.8s ease-out forwards;
+    animation: particle1 0.6s ease-out forwards;
 }
 
 .particle.p2 {
-    animation: particle2 0.8s ease-out forwards;
+    animation: particle2 0.6s ease-out forwards;
 }
 
 .particle.p3 {
-    animation: particle3 0.8s ease-out forwards;
+    animation: particle3 0.6s ease-out forwards;
 }
 
 .particle.p4 {
-    animation: particle4 0.8s ease-out forwards;
+    animation: particle4 0.6s ease-out forwards;
 }
 
 .particle.p5 {
-    animation: particle5 0.8s ease-out forwards;
+    animation: particle5 0.6s ease-out forwards;
 }
 
 .particle.p6 {
-    animation: particle6 0.8s ease-out forwards;
+    animation: particle6 0.6s ease-out forwards;
 }
 
 .particle.p7 {
-    animation: particle7 0.8s ease-out forwards;
+    animation: particle7 0.6s ease-out forwards;
 }
 
 .particle.p8 {
-    animation: particle8 0.8s ease-out forwards;
+    animation: particle8 0.6s ease-out forwards;
+}
+
+/* Ripple Effect per Epic+ skins */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+.ripple-effect {
+    position: absolute;
+    border: 2px solid;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    animation: ripple 0.6s ease-out forwards;
+    will-change: transform, opacity;
+}
+
+/* Screen Shake per Legendary skins */
+@keyframes screenShake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translate(-2px, 2px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translate(2px, -2px);
+    }
+}
+
+.shake-effect {
+    animation: screenShake 0.3s ease-in-out;
 }
 
 
