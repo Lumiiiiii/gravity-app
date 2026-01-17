@@ -26,6 +26,41 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Remove tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Re-enable text selection for text elements */
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Remove all focus outlines that create squares */
+*:focus,
+*:active,
+button:focus,
+button:active,
+.click-target:focus,
+.click-target:active {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
 }
 
 body {
@@ -928,6 +963,8 @@ body::before {
 }
 
 /* ========== RESPONSIVE ========== */
+
+/* TABLET */
 @media (max-width: 1200px) {
     .clicker-game {
         grid-template-columns: 1fr;
@@ -935,28 +972,315 @@ body::before {
     }
 
     .shop-panel {
-        max-height: 600px;
+        max-height: 500px;
     }
 }
 
+/* MOBILE - OTTIMIZZATO PER TELEFONO */
 @media (max-width: 768px) {
+
+    /* Reset padding */
     .app-container {
-        padding: 1rem;
+        padding: 0.5rem;
+        max-width: 100%;
     }
 
+    /* Header compatto */
     .game-header {
         flex-direction: column;
-        gap: 1.5rem;
-        padding: 1.5rem;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
 
-    .header-stats {
+    .header-left {
+        text-align: center;
         width: 100%;
-        justify-content: space-around;
     }
 
     .logo {
+        font-size: 1.75rem;
+        letter-spacing: 1px;
+    }
+
+    .tagline {
+        font-size: 0.8rem;
+    }
+
+    /* Stats header compatte */
+    .header-stats {
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.75rem;
+    }
+
+    .stat-box {
+        padding: 0.5rem 1rem;
+        flex: 1;
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+    }
+
+    /* Layout verticale per mobile */
+    .clicker-game {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Click zone ottimizzata */
+    .click-zone {
+        padding: 1.5rem 1rem;
+        order: 1;
+    }
+
+    .click-wrapper {
+        gap: 1.5rem;
+    }
+
+    /* Score più compatto */
+    .score-display .coin-icon {
         font-size: 2rem;
+    }
+
+    .score-display #main-score {
+        font-size: 2.5rem;
+    }
+
+    .coins-per-sec {
+        font-size: 1rem;
+    }
+
+    /* Click button - più grande per touch */
+    .click-target {
+        width: 180px;
+        height: 180px;
+        font-size: 5rem;
+        border-width: 4px;
+        /* Assicura nessun quadrato su tap */
+        -webkit-tap-highlight-color: transparent !important;
+        outline: none !important;
+    }
+
+    /* Combo indicator più piccolo */
+    .combo-indicator {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .combo-text {
+        font-size: 1rem;
+    }
+
+    /* Stats mini compatte */
+    .stats-mini {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .stat-mini .label {
+        font-size: 0.75rem;
+    }
+
+    .stat-mini .value {
+        font-size: 1.2rem;
+    }
+
+    /* Shop panel - sotto al click zone */
+    .shop-panel {
+        order: 2;
+        max-height: none;
+        min-height: 400px;
+    }
+
+    /* Tabs più grandi per touch */
+    .tab-navigation {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    .tab-btn {
+        font-size: 0.85rem;
+        padding: 1rem 0.5rem;
+        min-height: 50px;
+        /* Touch-friendly */
+    }
+
+    /* Tab content scrollabile */
+    .tab-content {
+        padding: 1rem;
+        max-height: 500px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Upgrade items touch-friendly */
+    .upgrade-item {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        min-height: 70px;
+        /* Easy to tap */
+    }
+
+    .upgrade-icon {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+
+    .upgrade-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .upgrade-info p {
+        font-size: 0.8rem;
+    }
+
+    .upgrade-cost {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /* Prestige button touch-friendly */
+    .prestige-button {
+        padding: 1.25rem;
+        font-size: 1.1rem;
+        min-height: 65px;
+    }
+
+    .prestige-hint {
+        font-size: 0.7rem;
+        margin-top: 0.4rem;
+    }
+
+    /* Skins grid 2 colonne su mobile */
+    .skins-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .skin-item {
+        padding: 0.75rem;
+        min-height: 100px;
+    }
+
+    .skin-preview {
+        width: 45px;
+        height: 45px;
+        font-size: 1.4rem;
+    }
+
+    .skin-name {
+        font-size: 0.8rem;
+    }
+
+    .skin-cost {
+        font-size: 0.7rem;
+    }
+
+    /* Premium items touch-friendly */
+    .premium-item {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        min-height: 70px;
+    }
+
+    .premium-header h4 {
+        font-size: 0.95rem;
+    }
+
+    .stars-cost {
+        font-size: 1rem;
+    }
+
+    .premium-item p {
+        font-size: 0.8rem;
+    }
+
+    /* Stats compatte */
+    .stat-row {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .stat-name {
+        font-size: 0.85rem;
+    }
+
+    .stat-stat {
+        font-size: 0.95rem;
+    }
+
+    /* Modal ottimizzati per mobile */
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+        max-width: none;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-content p {
+        font-size: 1rem;
+    }
+
+    .prestige-icon {
+        font-size: 3.5rem;
+    }
+
+    /* Buttons più grandi per touch */
+    .prestige-confirm-btn,
+    .primary-btn,
+    .cancel-btn,
+    .danger-btn {
+        min-height: 50px;
+        font-size: 1rem;
+    }
+
+    /* Notification toast mobile */
+    .notification-toast {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        transform: translateY(200px);
+        max-width: calc(100% - 2rem);
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .notification-toast.show {
+        transform: translateY(0);
+    }
+
+    /* Float text più piccolo */
+    .float-text {
+        font-size: 1.5rem;
+    }
+
+    .float-text.crit {
+        font-size: 2rem;
+    }
+}
+
+/* EXTRA SMALL MOBILE */
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.5rem;
     }
 
     .click-target {
@@ -966,7 +1290,7 @@ body::before {
     }
 
     .score-display #main-score {
-        font-size: 3rem;
+        font-size: 2rem;
     }
 
     .tab-btn {
@@ -975,6 +1299,42 @@ body::before {
     }
 
     .skins-grid {
-        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .skin-preview {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+/* LANDSCAPE MODE su mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .game-header {
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .click-zone {
+        padding: 1rem;
+    }
+
+    .click-target {
+        width: 140px;
+        height: 140px;
+        font-size: 4rem;
+    }
+
+    .clicker-game {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .shop-panel {
+        max-height: calc(100vh - 140px);
     }
 }
