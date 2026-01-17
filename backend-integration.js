@@ -24,6 +24,9 @@ const BACKEND_URL = window.location.hostname === 'localhost' || window.location.
     ? 'http://localhost:3000'
     : 'https://unremembered-gilda-nonrepressed.ngrok-free.dev';
 
+// Expose globally so telegram-integration.js can use it
+window.BACKEND_URL = BACKEND_URL;
+
 console.log('📡 BACKEND_URL:', BACKEND_URL);
 
 const tg = window.Telegram?.WebApp;

@@ -5,8 +5,8 @@
 
 const tg = window.Telegram?.WebApp;
 
-// Backend URL per i pagamenti Telegram Stars
-const BACKEND_URL = 'https://unremembered-gilda-nonrepressed.ngrok-free.dev';
+// Backend URL is now declared in backend-integration.js to avoid conflicts
+// Access it via window if needed in this file
 
 function initTelegramWebApp() {
     if (tg) {
@@ -56,6 +56,9 @@ async function purchaseWithStars(itemId, starsAmount) {
 
     return new Promise(async (resolve, reject) => {
         try {
+            // Use global BACKEND_URL from backend-integration.js
+            const BACKEND_URL = window.BACKEND_URL || 'https://unremembered-gilda-nonrepressed.ngrok-free.dev';
+
             // Chiamata al backend per creare l'invoice
             console.log(`📡 Chiamata a ${BACKEND_URL}/api/create-invoice`);
 
