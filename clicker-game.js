@@ -308,9 +308,12 @@ function initGame() {
     loadGameState();
     renderAllSkins();
     updateAllUI();
-    updateCoinColors(); // Apply saved level color
+    updateAllUI();
+    // updateCoinColors(); // Moved to equipSkin logic
     startAutoClicker();
     startTimeTracking();
+
+    // Ensure skin theme is applied on load
     equipSkin(gameState.equippedSkin);
 
     // Auto-save every 5 seconds
@@ -527,18 +530,21 @@ function addXp(amount) {
         ];
         gameState.levelColor = vibrantColors[Math.floor(Math.random() * vibrantColors.length)];
 
-        // Apply new color immediately
-        updateCoinColors();
+        // Apply new color immediately - NO, we keep skin theme
+        // updateCoinColors(); <-- Removed random update
 
         showNotification(`🆙 LEVEL UP! Lvl ${gameState.level} (+1% Power)`);
         createParticles({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 }); // Celebration
     }
 }
 
-function updateCoinColors() {
-    const color = gameState.levelColor;
+function updateCoinColors(baseColor, darkColor, brightColor) {
+    const color = baseColor || gameState.levelColor || '#fbbf24';
+    const dark = darkColor || color;
+    // const bright = brightColor || color; // Use if needed
 
     // 1. Update Text Colors (Score & Header)
+    // User Request: Coin Number in Dark Green (Dark Color)
     const textElements = [
         document.getElementById('main-score'),
         document.getElementById('header-coins')
@@ -546,17 +552,19 @@ function updateCoinColors() {
 
     textElements.forEach(el => {
         if (el) {
-            el.style.color = color;
-            el.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+            el.style.color = dark; // Use Darker variant for numbers
+            el.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`; // Glow remains base color
             el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease';
         }
     });
 
     // 2. Update Coin Icons (Header & Main)
-    // We use drop-shadow because we can't easily recolor a native emoji
+    // We use drop-shadow because we can't easily recolor a native emoji (or img now)
     const iconElements = [
         document.querySelector('.header-stats .stat-box:first-child .stat-icon'), // Header Icon
-        document.querySelector('.score-display .coin-icon')                       // Main Score Icon
+        document.querySelector('.score-display .coin-icon'),                      // Main Score Icon
+        document.querySelector('.header-stats .stat-box img.cat-coin-img'),
+        document.querySelector('.score-display img.cat-coin-img')
     ];
 
     iconElements.forEach(el => {
@@ -573,6 +581,12 @@ function updateCoinColors() {
     const cpsEl = document.getElementById('cps-display');
     if (cpsEl) {
         cpsEl.style.color = color;
+    }
+
+    // 4. Update Multipliers (Stats)
+    const statMulti = document.getElementById('stat-multi');
+    if (statMulti) {
+        statMulti.style.color = color;
     }
 }
 
@@ -832,6 +846,9 @@ function equipSkin(skinId) {
     }
 
     renderAllSkins();
+
+    // Apply Theme Colors
+    applyTheme(skin.color);
 }
 
 // === PREMIUM SYSTEM (Simulated) ===
@@ -1032,6 +1049,14 @@ function createFloatingText(event, amount, isCrit) {
     floatEl.style.left = `${event.clientX - rect.left}px`;
     floatEl.style.top = `${event.clientY - rect.top}px`;
 
+    // Dynamic Skin Theme Colors
+    if (isCrit) {
+        floatEl.style.color = 'var(--theme-bright, #fff)';
+        floatEl.style.textShadow = '0 0 10px var(--theme-base, #fca5a5)';
+    } else {
+        floatEl.style.color = 'var(--theme-base, #fff)';
+    }
+
     container.appendChild(floatEl);
 
     setTimeout(() => floatEl.remove(), 1000);
@@ -1149,6 +1174,45 @@ function addSkinSpecificEffect(event, rect, color, rarity) {
         btn.style.boxShadow = `0 0 80px ${color}, 0 0 120px ${color}`;
         setTimeout(() => btn.style.boxShadow = originalShadow, 200);
     }
+}
+
+// === THEME SYSTEM ===
+function applyTheme(hexColor) {
+    if (!hexColor) return;
+
+    gameState.levelColor = hexColor; // Update the state property used by legacy functions
+
+    // Generate variants
+    // Simple brightness adjustment: positive % is lighter, negative % is darker
+    const brightColor = adjustBrightness(hexColor, 50); // +50% brightness
+    const darkColor = adjustBrightness(hexColor, -30); // -30% darkness
+
+    // Set CSS Variables for global usage
+    const r = document.documentElement;
+    r.style.setProperty('--theme-base', hexColor);
+    r.style.setProperty('--theme-bright', brightColor);
+    r.style.setProperty('--theme-dark', darkColor);
+    r.style.setProperty('--theme-glow', `${hexColor}80`); // 50% opacity
+
+    // Update specific UI components as requested
+    updateCoinColors(hexColor, darkColor, brightColor);
+}
+
+function adjustBrightness(hex, percent) {
+    hex = hex.replace(/^\s*#|\s*$/g, '');
+    if (hex.length === 3) hex = hex.replace(/(.)/g, '$1$1');
+
+    const num = parseInt(hex, 16);
+    let r = (num >> 16) + Math.round(2.55 * percent);
+    let g = ((num >> 8) & 0x00FF) + Math.round(2.55 * percent);
+    let b = (num & 0x0000FF) + Math.round(2.55 * percent);
+
+    // Clamp to 0-255
+    r = Math.min(255, Math.max(0, r));
+    g = Math.min(255, Math.max(0, g));
+    b = Math.min(255, Math.max(0, b));
+
+    return '#' + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
 }
 
 // === HELPERS ===
