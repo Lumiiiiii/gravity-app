@@ -554,11 +554,18 @@ function updateCoinColors(baseColor, darkColor, brightColor) {
         if (el) {
             el.style.color = dark; // Use Darker variant for numbers
 
-            // Add stroke for readability (black outline)
-            el.style.webkitTextStroke = '1px #000000';
-            el.style.textShadow = `0 0 10px ${color}`; // Simplified glow
+            // Add stroke for readability using text-shadow (cleaner than webkitTextStroke)
+            // 4 shadows for outline + original glow
+            el.style.webkitTextStroke = '0px';
+            el.style.textShadow = `
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000,
+                 0 0 10px ${color}
+            `;
 
-            el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease, -webkit-text-stroke 0.5s ease';
+            el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease';
         }
     });
 
