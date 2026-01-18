@@ -509,22 +509,42 @@ function addXp(amount) {
 
 function updateCoinColors() {
     const color = gameState.levelColor;
-    const elements = [
+
+    // 1. Update Text Colors (Score & Header)
+    const textElements = [
         document.getElementById('main-score'),
         document.getElementById('header-coins')
     ];
 
-    elements.forEach(el => {
+    textElements.forEach(el => {
         if (el) {
             el.style.color = color;
-            el.style.textShadow = `0 0 20px ${color}, 0 0 40px ${color}`;
+            el.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+            el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease';
         }
     });
 
-    // Update coin emoji if exists
-    const coinIcon = document.querySelector('.stat-item .icon:last-child');
-    if (coinIcon && coinIcon.textContent === '🪙') {
-        coinIcon.style.filter = `drop-shadow(0 0 5px ${color})`;
+    // 2. Update Coin Icons (Header & Main)
+    // We use drop-shadow because we can't easily recolor a native emoji
+    const iconElements = [
+        document.querySelector('.header-stats .stat-box:first-child .stat-icon'), // Header Icon
+        document.querySelector('.score-display .coin-icon')                       // Main Score Icon
+    ];
+
+    iconElements.forEach(el => {
+        if (el) {
+            el.style.filter = `drop-shadow(0 0 8px ${color})`;
+            el.style.transition = 'filter 0.5s ease';
+            // Optional: rotate slightly to indicate change
+            el.style.transform = 'scale(1.1)';
+            setTimeout(() => el.style.transform = 'scale(1)', 300);
+        }
+    });
+
+    // 3. Update 'coins per sec' text too if desired, or keep it subtle
+    const cpsEl = document.getElementById('cps-display');
+    if (cpsEl) {
+        cpsEl.style.color = color;
     }
 }
 
@@ -870,7 +890,14 @@ function updateAllUI() {
         // Header
         document.getElementById('header-coins').textContent = formatNumber(gameState.coins);
         document.getElementById('header-prestige').textContent = gameState.prestigeLevel;
-        if (document.getElementById('header-level')) document.getElementById('header-level').textContent = gameState.level;
+        if (document.getElementById('header-level')) {
+            document.getElementById('header-level').textContent = gameState.level;
+
+            // Update Progress Bar
+            const progress = Math.min(100, Math.max(0, (gameState.xp / gameState.xpToNextLevel) * 100));
+            const progressBar = document.getElementById('level-progress-bar');
+            if (progressBar) progressBar.style.width = `${progress}%`;
+        }
 
         // Main score
         document.getElementById('main-score').textContent = formatNumber(gameState.coins);
