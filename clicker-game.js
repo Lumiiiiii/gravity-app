@@ -781,8 +781,21 @@ function equipSkin(skinId) {
 
     gameState.equippedSkin = skinId;
 
+    // Determine image source (for now use cat-coin.png, later will be skin-specific)
+    // Format: skin-{skinId}.png (e.g., skin-neon-blue.png)
+    const skinImageSrc = skinId === 'default' ? 'cat-coin.png' : `skin-${skinId}.png`;
+
+    // Update ALL coin icons
+    const headerCoinIcon = document.querySelector('.header-stats .stat-box img.cat-coin-img');
+    const mainScoreCoinIcon = document.querySelector('.score-display img.cat-coin-img');
+    const clickButtonImg = document.getElementById('click-button-img');
+
+    if (headerCoinIcon) headerCoinIcon.src = skinImageSrc;
+    if (mainScoreCoinIcon) mainScoreCoinIcon.src = skinImageSrc;
+    if (clickButtonImg) clickButtonImg.src = skinImageSrc;
+
+    // Update button styling
     const btn = document.getElementById('click-target');
-    btn.textContent = skin.emoji;
 
     if (skin.gradient) {
         btn.style.background = skin.gradient;
