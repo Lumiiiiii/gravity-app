@@ -55,11 +55,15 @@ async function saveToCloud() {
                     totalClicks: gameState.totalClicks,
                     prestigeLevel: gameState.prestigeLevel,
                     prestigePoints: gameState.prestigePoints,
+                    level: gameState.level,
+                    xp: gameState.xp,
+                    xpToNextLevel: gameState.xpToNextLevel,
                     upgrades: gameState.upgrades,
                     ownedSkins: gameState.ownedSkins,
                     equippedSkin: gameState.equippedSkin,
                     highestCombo: gameState.highestCombo,
-                    premiumBoosts: gameState.premiumBoosts
+                    premiumBoosts: gameState.premiumBoosts,
+                    lastSaveTime: Date.now() // Timestamp for conflict resolution
                 }
             })
         });
@@ -84,16 +88,38 @@ async function loadFromCloud() {
         const data = await response.json();
 
         if (data.found && data.gameState) {
-            // Merge cloud data with local state
+            // CONFLICT RESOLUTION:
+            // Only overwrite local data if cloud data is NEWER or if local data is basically empty (new session)
+            const localSaveTime = gameState.lastSaveTime || 0;
+            const cloudSaveTime = data.gameState.lastSaveTime || 0;
+
+            // If local progress is significantly higher (e.g. played offline), keep local
+            // Using totalCoinsEarned as a proxy for progress if timestamps are messy
+            if (gameState.totalCoinsEarned > (data.gameState.totalCoinsEarned || 0) && localSaveTime > cloudSaveTime) {
+                console.log('⚠️ Local save is newer/better. Keeping local.');
+                // Force a cloud save now to update server
+                saveToCloud();
+                return false;
+            }
+
+            console.log('☁️ Downloading cloud save...');
+
             gameState.coins = data.gameState.coins || 0;
             gameState.totalCoinsEarned = data.gameState.totalCoinsEarned || 0;
             gameState.totalClicks = data.gameState.totalClicks || 0;
             gameState.prestigeLevel = data.gameState.prestigeLevel || 0;
             gameState.prestigePoints = data.gameState.prestigePoints || 0;
+
+            // Level System
+            gameState.level = data.gameState.level || 1;
+            gameState.xp = data.gameState.xp || 0;
+            gameState.xpToNextLevel = data.gameState.xpToNextLevel || 50;
+
             gameState.ownedSkins = data.gameState.ownedSkins || ['default'];
             gameState.equippedSkin = data.gameState.equippedSkin || 'default';
             gameState.highestCombo = data.gameState.highestCombo || 1;
             gameState.premiumBoosts = data.gameState.premiumBoosts || { multiplier24h: false, multiplier24hExpiry: 0 };
+            gameState.lastSaveTime = cloudSaveTime;
 
             if (data.gameState.upgrades) {
                 for (const [key, value] of Object.entries(data.gameState.upgrades)) {
@@ -103,7 +129,11 @@ async function loadFromCloud() {
                 }
             }
 
-            console.log('☁️ Loaded from cloud');
+            // Sync UI immediate
+            if (window.updateAllUI) window.updateAllUI();
+            if (window.updateCoinColors) window.updateCoinColors();
+
+            console.log('☁️ Loaded from cloud successfully');
             return true;
         }
         return false;
@@ -112,6 +142,37 @@ async function loadFromCloud() {
         return false;
     }
 }
+
+// Function to reset cloud data
+async function resetCloudData() {
+    if (!currentUserId) return;
+
+    // We overwrite with a fresh state
+    const emptyState = {
+        coins: 0,
+        totalCoinsEarned: 0,
+        level: 1,
+        xp: 0,
+        upgrades: {}, // Will rely on defaults merging
+        lastSaveTime: Date.now()
+    };
+
+    try {
+        await fetch(`${BACKEND_URL}/api/save`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegramId: currentUserId,
+                username: tgApp?.initDataUnsafe?.user?.username,
+                gameState: emptyState
+            })
+        });
+        console.log('☁️ Cloud save reset.');
+    } catch (e) {
+        console.error('Reset cloud error:', e);
+    }
+}
+window.resetCloudData = resetCloudData;
 
 // === DAILY REWARDS ===
 async function checkDailyReward() {

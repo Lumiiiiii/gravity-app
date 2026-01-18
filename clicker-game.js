@@ -369,9 +369,18 @@ function loadGameState() {
     }
 }
 
-function resetGame() {
+async function resetGame() {
     if (confirm('⚠️ Are you sure? This will delete ALL progress!')) {
+        // 1. Clear Local Storage
         localStorage.removeItem('neonClickerSave');
+
+        // 2. Clear Cloud Save (if connected)
+        if (window.resetCloudData) {
+            showNotification('🧹 Wiping cloud data...');
+            await window.resetCloudData();
+        }
+
+        // 3. Reload
         location.reload();
     }
 }
