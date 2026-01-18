@@ -183,43 +183,67 @@ async function loadLeaderboard() {
         console.log('🏆 Loading leaderboard from:', `${BACKEND_URL}/api/leaderboard`);
 
         const response = await fetch(`${BACKEND_URL}/api/leaderboard`, {
+            method: 'GET',
             headers: {
-                'ngrok-skip-browser-warning': 'true'
+                'ngrok-skip-browser-warning': 'true',
+                'Content-Type': 'application/json'
             }
+        }).catch(err => {
+            console.error('❌ Network Error (Fetch failed):', err);
+            throw new Error('Network Error: Check if server is running and Ngrok URL is correct.');
         });
 
         console.log('Response status:', response.status);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('❌ Server Error Response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const leaderboard = await response.json();
-        console.log('✅ Leaderboard loaded:', leaderboard.length, 'players');
+        console.log('✅ Leaderboard loaded:', leaderboard ? leaderboard.length : 0, 'players');
 
-        if (leaderboard.length === 0) {
-            container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No players yet. Be the first!</p>';
+        if (!leaderboard || leaderboard.length === 0) {
+            container.innerHTML = '<div class="leaderboard-empty">No players yet. Be the first!</div>';
             return;
         }
 
-        container.innerHTML = leaderboard.map(player => `
-            <div class="leaderboard-item ${player.rank <= 3 ? 'top-' + player.rank : ''}">
-                <div class="leaderboard-rank">${player.rank <= 3 ? ['🥇', '🥈', '🥉'][player.rank - 1] : `#${player.rank}`}</div>
-                <div class="leaderboard-name">${player.name}</div>
-                <div class="leaderboard-stats">
-                    <span class="leaderboard-coins">${formatNumber(player.coins)} 🪙</span>
-                    ${player.prestige > 0 ? `<span class="leaderboard-prestige">⭐${player.prestige}</span>` : ''}
-                </div>
-            </div>
-        `).join('');
+        // Render leaderboard
+        container.innerHTML = leaderboard.map((player, index) => {
+            // Highlight current user
+            const isMe = currentUserId && player.telegramId && player.telegramId.toString() === currentUserId.toString();
+            const rankClass = index < 3 ? `rank-${index + 1}` : '';
+            const rowClass = isMe ? 'leaderboard-item me' : 'leaderboard-item';
 
-        // Load user's rank
-        if (currentUserId) {
-            loadUserRank();
+            return `
+            <div class="${rowClass}">
+                <div class="rank ${rankClass}">#${player.rank}</div>
+                <div class="player-info">
+                    <div class="player-name">${player.name} ${isMe ? '(You)' : ''}</div>
+                    <div class="player-prestige">⭐ Prestige ${player.prestige || 0}</div>
+                </div>
+                <div class="player-score">💰 ${formatNumber(player.coins)}</div>
+            </div>
+            `;
+        }).join('');
+
+        // Also update own rank if possible
+        if (currentUserId && window.updateUserRank) {
+            window.updateUserRank();
         }
+
     } catch (error) {
-        console.error('❌ Leaderboard error:', error);
-        container.innerHTML = '<p style="text-align: center; opacity: 0.7; color: #ef4444;">⚠️ Unable to load leaderboard.<br>Backend server offline or CORS issue.<br>Check console for details.</p>';
+        console.error('❌ Leaderboard Loading Error:', error);
+        container.innerHTML = `
+            <div class="leaderboard-error">
+                <p>⚠️ Unable to load leaderboard.</p>
+                <p style="font-size: 12px; margin-top: 5px; opacity: 0.7;">
+                    ${error.message}
+                </p>
+                <button onclick="loadLeaderboard()" style="margin-top: 10px; padding: 5px 10px; background: rgba(255,255,255,0.1); border: none; border-radius: 4px; color: white;">Try Again</button>
+            </div>
+        `;
     }
 }
 
