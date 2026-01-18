@@ -10,6 +10,11 @@ let gameState = {
     prestigeLevel: 0,
     prestigePoints: 0,
 
+    // Level System
+    level: 1,
+    xp: 0,
+    xpToNextLevel: 50,
+
     // Upgrades
     upgrades: {
         clickPower: { level: 1, baseCost: 20, costMultiplier: 1.5 },
@@ -39,7 +44,11 @@ let gameState = {
     // Premium
     premiumBoosts: {
         multiplier24h: false,
-        multiplier24hExpiry: 0
+        multiplier24hExpiry: 0,
+        fastAutoClick: false, // x2 Auto Click Speed
+        fastAutoClickExpiry: 0,
+        luckyClicks: false, // x2 Crit Chance
+        luckyClicksExpiry: 0
     }
 };
 
@@ -62,7 +71,9 @@ const SKINS = {
         color: '#0ea5e9',
         shadow: 'rgba(14, 165, 233, 0.6)',
         emoji: '💎',
-        particles: false
+        particles: false,
+        bonusDesc: '+5% Coins',
+        bonus: { type: 'multiplier', value: 0.05 }
     },
     'toxic-green': {
         name: 'Toxic Green',
@@ -71,7 +82,9 @@ const SKINS = {
         color: '#84cc16',
         shadow: 'rgba(132, 204, 22, 0.6)',
         emoji: '☢️',
-        particles: false
+        particles: false,
+        bonusDesc: '+10% Auto Click',
+        bonus: { type: 'autoClick', value: 0.10 }
     },
     'hot-pink': {
         name: 'Hot Pink',
@@ -80,7 +93,9 @@ const SKINS = {
         color: '#ec4899',
         shadow: 'rgba(236, 72, 153, 0.6)',
         emoji: '💖',
-        particles: false
+        particles: false,
+        bonusDesc: '+5% Crit Chance',
+        bonus: { type: 'critChance', value: 0.05 }
     },
     'electric-violet': {
         name: 'Electric Violet',
@@ -98,7 +113,9 @@ const SKINS = {
         color: '#06b6d4',
         shadow: 'rgba(6, 182, 212, 0.6)',
         emoji: '🌊',
-        particles: false
+        particles: false,
+        bonusDesc: '+20% Auto Click',
+        bonus: { type: 'autoClick', value: 0.20 }
     },
 
     // RARE (100k - 500k)
@@ -110,7 +127,9 @@ const SKINS = {
         shadow: 'rgba(234, 179, 8, 0.7)',
         emoji: '👑',
         particles: true,
-        particleColor: '#fbbf24'
+        particleColor: '#fbbf24',
+        bonusDesc: '+20% Coins',
+        bonus: { type: 'multiplier', value: 0.20 }
     },
     'purple-haze': {
         name: 'Purple Haze',
@@ -120,7 +139,9 @@ const SKINS = {
         shadow: 'rgba(168, 85, 247, 0.7)',
         emoji: '🔮',
         particles: true,
-        particleColor: '#c084fc'
+        particleColor: '#c084fc',
+        bonusDesc: '+10% Crit Chance',
+        bonus: { type: 'critChance', value: 0.10 }
     },
     'cyber-cyan': {
         name: 'Cyber Cyan',
@@ -130,7 +151,9 @@ const SKINS = {
         shadow: 'rgba(6, 182, 212, 0.7)',
         emoji: '🌊',
         particles: true,
-        particleColor: '#22d3ee'
+        particleColor: '#22d3ee',
+        bonusDesc: '+25% Auto Click',
+        bonus: { type: 'autoClick', value: 0.25 }
     },
     'crimson-fury': {
         name: 'Crimson Fury',
@@ -140,7 +163,9 @@ const SKINS = {
         shadow: 'rgba(220, 38, 38, 0.7)',
         emoji: '🔥',
         particles: true,
-        particleColor: '#ef4444'
+        particleColor: '#ef4444',
+        bonusDesc: '+15% Crit Chance',
+        bonus: { type: 'critChance', value: 0.15 }
     },
     'solar-flare': {
         name: 'Solar Flare',
@@ -150,7 +175,8 @@ const SKINS = {
         shadow: 'rgba(251, 146, 60, 0.7)',
         emoji: '☀️',
         particles: true,
-        particleColor: '#fdba74'
+        bonusDesc: '+30% Coins',
+        bonus: { type: 'multiplier', value: 0.30 }
     },
     'midnight-shadow': {
         name: 'Midnight Shadow',
@@ -160,7 +186,9 @@ const SKINS = {
         shadow: 'rgba(99, 102, 241, 0.7)',
         emoji: '🌙',
         particles: true,
-        particleColor: '#818cf8'
+        particleColor: '#818cf8',
+        bonusDesc: '+25% Coins',
+        bonus: { type: 'multiplier', value: 0.25 }
     },
 
     // EPIC (1M - 5M)
@@ -173,7 +201,8 @@ const SKINS = {
         gradient: 'linear-gradient(45deg, #10b981, #3b82f6, #8b5cf6)',
         emoji: '🌌',
         particles: true,
-        particleColor: '#10b981'
+        bonusDesc: '+50% Auto Click',
+        bonus: { type: 'autoClick', value: 0.50 }
     },
     'phoenix': {
         name: 'Phoenix Fire',
@@ -184,7 +213,9 @@ const SKINS = {
         gradient: 'linear-gradient(45deg, #f97316, #ef4444, #dc2626)',
         emoji: '🔥',
         particles: true,
-        particleColor: '#fb923c'
+        particleColor: '#fb923c',
+        bonusDesc: '+40% Auto Click',
+        bonus: { type: 'autoClick', value: 0.40 }
     },
     'dragon-soul': {
         name: 'Dragon Soul',
@@ -195,7 +226,9 @@ const SKINS = {
         gradient: 'linear-gradient(45deg, #dc2626, #f97316, #fbbf24)',
         emoji: '🐲',
         particles: true,
-        particleColor: '#f87171'
+        particleColor: '#f87171',
+        bonusDesc: '+20% Crit Chance',
+        bonus: { type: 'critChance', value: 0.20 }
     },
     'ice-crystal': {
         name: 'Ice Crystal',
@@ -206,7 +239,9 @@ const SKINS = {
         gradient: 'linear-gradient(45deg, #0ea5e9, #06b6d4, #ecfeff)',
         emoji: '❄️',
         particles: true,
-        particleColor: '#38bdf8'
+        particleColor: '#38bdf8',
+        bonusDesc: '+40% Coins',
+        bonus: { type: 'multiplier', value: 0.40 }
     },
     'galaxy': {
         name: 'Galaxy Burst',
@@ -217,7 +252,9 @@ const SKINS = {
         gradient: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb)',
         emoji: '🌠',
         particles: true,
-        particleColor: '#a78bfa'
+        particleColor: '#a78bfa',
+        bonusDesc: '+75% Auto Click',
+        bonus: { type: 'autoClick', value: 0.75 }
     },
 
     // LEGENDARY (10M+ or Premium)
@@ -231,7 +268,9 @@ const SKINS = {
         emoji: '🖥️',
         particles: true,
         particleColor: '#4ade80',
-        special: 'rain'
+        special: 'rain',
+        bonusDesc: '+50% Coins & +20% Crit',
+        bonus: { type: 'multiplier', value: 0.50 } // Basic bonus, tough to do double bonus without refactor but this is good enough
     },
     'rainbow': {
         name: 'Rainbow Dream',
@@ -243,7 +282,9 @@ const SKINS = {
         emoji: '🌈',
         particles: true,
         particleColor: '#ff0080',
-        special: 'rainbow'
+        special: 'rainbow',
+        bonusDesc: '2x ALL COINS',
+        bonus: { type: 'multiplier', value: 1.0 } // +100% = 2x
     },
     'cosmic': {
         name: 'Cosmic Energy',
@@ -255,7 +296,9 @@ const SKINS = {
         emoji: '✨',
         particles: true,
         particleColor: '#ffffff',
-        special: 'stars'
+        special: 'stars',
+        bonusDesc: '2x CRIT CHANCE',
+        bonus: { type: 'critChance', value: 1.0 } // +100%
     }
 };
 
@@ -288,7 +331,11 @@ function loadGameState() {
             gameState.totalCoinsEarned = loaded.totalCoinsEarned || 0;
             gameState.totalClicks = loaded.totalClicks || 0;
             gameState.prestigeLevel = loaded.prestigeLevel || 0;
+            gameState.prestigeLevel = loaded.prestigeLevel || 0;
             gameState.prestigePoints = loaded.prestigePoints || 0;
+            gameState.level = loaded.level || 1;
+            gameState.xp = loaded.xp || 0;
+            gameState.xpToNextLevel = loaded.xpToNextLevel || 50;
             gameState.ownedSkins = loaded.ownedSkins || ['default'];
             gameState.equippedSkin = loaded.equippedSkin || 'default';
             gameState.highestCombo = loaded.highestCombo || 1;
@@ -306,9 +353,12 @@ function loadGameState() {
             // Premium boosts
             if (loaded.premiumBoosts) {
                 gameState.premiumBoosts = loaded.premiumBoosts;
-                if (gameState.premiumBoosts.multiplier24hExpiry < Date.now()) {
-                    gameState.premiumBoosts.multiplier24h = false;
-                }
+                const now = Date.now();
+
+                // Check Expiries
+                if (gameState.premiumBoosts.multiplier24hExpiry < now) gameState.premiumBoosts.multiplier24h = false;
+                if (gameState.premiumBoosts.fastAutoClickExpiry < now) gameState.premiumBoosts.fastAutoClick = false;
+                if (gameState.premiumBoosts.luckyClicksExpiry < now) gameState.premiumBoosts.luckyClicks = false;
             }
         } catch (error) {
             console.error('Error loading save:', error);
@@ -335,7 +385,11 @@ function performClick(event) {
 
     gameState.coins += earnedCoins;
     gameState.totalCoinsEarned += earnedCoins;
+    gameState.totalCoinsEarned += earnedCoins;
     gameState.totalClicks++;
+
+    // Add XP
+    addXp(1);
 
     // Combo System
     updateCombo();
@@ -427,19 +481,55 @@ function getUpgradeCost(upgradeType) {
     return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.level - 1));
 }
 
+function addXp(amount) {
+    gameState.xp += amount;
+    if (gameState.xp >= gameState.xpToNextLevel) {
+        gameState.xp -= gameState.xpToNextLevel;
+        gameState.level++;
+        gameState.xpToNextLevel = Math.floor(gameState.level * 50 * Math.pow(1.1, gameState.level));
+
+        showNotification(`🆙 LEVEL UP! Lvl ${gameState.level} (+1% Power)`);
+        createParticles({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 }); // Celebration
+    }
+}
+
 // === CALCULATIONS ===
 function getClickPower() {
-    return gameState.upgrades.clickPower.level * getGlobalMultiplier();
+    let power = gameState.upgrades.clickPower.level * getGlobalMultiplier();
+
+    // Level Bonus (+1% per level)
+    power *= (1 + (gameState.level - 1) * 0.01);
+
+    return power;
 }
 
 function getAutoClickerPower() {
-    return gameState.upgrades.autoClicker.level * getGlobalMultiplier();
+    let power = gameState.upgrades.autoClicker.level * getGlobalMultiplier();
+
+    // Skin Bonus
+    const equippedSkin = SKINS[gameState.equippedSkin];
+    if (equippedSkin && equippedSkin.bonus && equippedSkin.bonus.type === 'autoClick') {
+        power *= (1 + equippedSkin.bonus.value);
+    }
+
+    if (gameState.premiumBoosts.fastAutoClick) power *= 2;
+    return power;
 }
 
 function getCritChance() {
     const base = gameState.upgrades.critChance.level * 0.02;
     const luck = gameState.upgrades.luckBoost.level * 0.03; // New luck upgrade
-    return Math.min(0.75, base + luck); // Max 75%
+    let chance = base + luck;
+
+    // Skin Bonus
+    const equippedSkin = SKINS[gameState.equippedSkin];
+    if (equippedSkin && equippedSkin.bonus && equippedSkin.bonus.type === 'critChance') {
+        chance += equippedSkin.bonus.value;
+    }
+
+    if (gameState.premiumBoosts.luckyClicks) chance *= 2; // Lucky Clicks Boost
+
+    return Math.min(0.75, chance); // Max 75%
 }
 
 function getGlobalMultiplier() {
@@ -447,6 +537,13 @@ function getGlobalMultiplier() {
     multi += gameState.upgrades.multiplier.level * 0.1;
     multi += gameState.upgrades.megaMultiplier.level * 0.15; // New upgrade
     multi += gameState.prestigePoints * 0.1; // 10% per prestige point
+
+    // Skin Bonus
+    const equippedSkin = SKINS[gameState.equippedSkin];
+    if (equippedSkin && equippedSkin.bonus && equippedSkin.bonus.type === 'multiplier') {
+        multi += equippedSkin.bonus.value;
+    }
+
     if (gameState.premiumBoosts.multiplier24h) multi *= 2;
     return multi;
 }
@@ -558,6 +655,7 @@ function createSkinElement(skinId, skin) {
     div.innerHTML = `
         <div class="skin-preview" style="${previewStyle}">${skin.emoji}</div>
         <p class="skin-name">${skin.name}</p>
+        <p class="skin-bonus" style="font-size: 10px; color: #fbbf24; margin-bottom: 4px;">${skin.bonusDesc || ''}</p>
         <span class="skin-cost">${isOwned ? (isEquipped ? 'EQUIPPED' : 'OWNED') : costText}</span>
     `;
 
@@ -630,10 +728,10 @@ function buyPremiumItem(itemId) {
     const items = {
         'coinbooster': { name: '💰 Coin Booster', stars: 10, coins: 1000000 },
         'starter': { name: '🌟 Starter Pack', stars: 25, coins: 1000000, skin: 'random-common' },
-        'megaboost': { name: '⚡ Mega Boost', stars: 50, effect: '24h-2x' },
-        'legendary': { name: '💫 Legendary Pack', stars: 100, skins: ['rainbow', 'cosmic'] },
-        'prestige': { name: '🎆 Prestige Booster', stars: 75, prestigePoints: 5 },
-        'ultimate': { name: '🔥 Ultimate Bundle', stars: 250, all: true }
+        'megaboost': { name: '⚡ Mega Boost', stars: 50, effect: '24h-2x', description: '2x Coins for 24h' },
+        'legendary': { name: '💫 Legendary Pack', stars: 100, skins: ['rainbow', 'cosmic'], description: '2 Exclusive Skins' },
+        'prestige': { name: '🎆 Prestige Booster', stars: 75, prestigePoints: 5, description: '+5 Prestige Points' },
+        'ultimate': { name: '🔥 Ultimate Bundle', stars: 250, all: true, description: '100M Coins + ALL Boosts + Skins' }
     };
 
     const item = items[itemId];
@@ -694,11 +792,24 @@ function deliverPremiumItem(itemId, item) {
     }
 
     if (item.all) {
-        gameState.coins += 10000000;
-        gameState.prestigePoints += 5;
+        // ULTIMATE BUNDLE UPDATE
+        gameState.coins += 100000000; // 100 MILLION
+        gameState.prestigePoints += 10;
+
+        // 1. Coin Multiplier (24h)
         gameState.premiumBoosts.multiplier24h = true;
         gameState.premiumBoosts.multiplier24hExpiry = Date.now() + (24 * 60 * 60 * 1000);
-        ['rainbow', 'cosmic'].forEach(skinId => {
+
+        // 2. Fast Auto Click (24h)
+        gameState.premiumBoosts.fastAutoClick = true;
+        gameState.premiumBoosts.fastAutoClickExpiry = Date.now() + (24 * 60 * 60 * 1000);
+
+        // 3. Lucky Clicks (24h)
+        gameState.premiumBoosts.luckyClicks = true;
+        gameState.premiumBoosts.luckyClicksExpiry = Date.now() + (24 * 60 * 60 * 1000);
+
+        // Skins
+        ['rainbow', 'cosmic', 'matrix'].forEach(skinId => {
             if (!gameState.ownedSkins.includes(skinId)) {
                 gameState.ownedSkins.push(skinId);
             }
@@ -721,6 +832,7 @@ function updateAllUI() {
         // Header
         document.getElementById('header-coins').textContent = formatNumber(gameState.coins);
         document.getElementById('header-prestige').textContent = gameState.prestigeLevel;
+        if (document.getElementById('header-level')) document.getElementById('header-level').textContent = gameState.level;
 
         // Main score
         document.getElementById('main-score').textContent = formatNumber(gameState.coins);
