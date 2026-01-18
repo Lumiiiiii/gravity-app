@@ -35,7 +35,7 @@ let gameState = {
 
     // Stats
     highestCombo: 1,
-    startTime: Date.now(),
+    playTime: 0, // Track active playtime in seconds
 
     // Combo System
     combo: 1,
@@ -341,7 +341,7 @@ function loadGameState() {
             gameState.ownedSkins = loaded.ownedSkins || ['default'];
             gameState.equippedSkin = loaded.equippedSkin || 'default';
             gameState.highestCombo = loaded.highestCombo || 1;
-            gameState.startTime = loaded.startTime || Date.now();
+            gameState.playTime = loaded.playTime || 0;
 
             // Merge upgrades (preserve new upgrades if they don't exist in save)
             if (loaded.upgrades) {
@@ -1127,8 +1127,18 @@ function showNotification(message) {
 // === TIME TRACKING ===
 function startTimeTracking() {
     setInterval(() => {
-        const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000 / 60);
-        document.getElementById('stat-time-played').textContent = `${elapsed}m`;
+        // Increment active play time
+        gameState.playTime = (gameState.playTime || 0) + 1;
+
+        const minutes = Math.floor(gameState.playTime / 60);
+        const hours = Math.floor(minutes / 60);
+
+        const display = hours > 0
+            ? `${hours}h ${minutes % 60}m`
+            : `${minutes}m`;
+
+        const el = document.getElementById('stat-time-played');
+        if (el) el.textContent = display;
     }, 1000);
 }
 

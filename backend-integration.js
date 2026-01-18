@@ -63,6 +63,7 @@ async function saveToCloud() {
                     equippedSkin: gameState.equippedSkin,
                     highestCombo: gameState.highestCombo,
                     premiumBoosts: gameState.premiumBoosts,
+                    playTime: gameState.playTime || 0,
                     lastSaveTime: Date.now() // Timestamp for conflict resolution
                 }
             })
@@ -119,6 +120,7 @@ async function loadFromCloud() {
             gameState.equippedSkin = data.gameState.equippedSkin || 'default';
             gameState.highestCombo = data.gameState.highestCombo || 1;
             gameState.premiumBoosts = data.gameState.premiumBoosts || { multiplier24h: false, multiplier24hExpiry: 0 };
+            gameState.playTime = data.gameState.playTime || 0;
             gameState.lastSaveTime = cloudSaveTime;
 
             if (data.gameState.upgrades) {
