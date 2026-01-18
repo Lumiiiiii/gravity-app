@@ -1178,17 +1178,16 @@ body::before {
         max-width: 100%;
     }
 
-    /* Header compatto */
+    /* Header compatto mobile */
     .game-header {
+        padding: 0.75rem 1rem;
         flex-direction: column;
         gap: 1rem;
-        padding: 1rem;
-        margin-bottom: 1rem;
     }
 
     .header-left {
-        text-align: center;
         width: 100%;
+        text-align: center;
     }
 
     .logo {
