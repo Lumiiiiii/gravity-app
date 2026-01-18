@@ -315,6 +315,9 @@ function initGame() {
 
     // Auto-save every 5 seconds
     setInterval(saveGameState, 5000);
+
+    // Enable multi-touch
+    initMultiTouch();
 }
 
 // === SAVE/LOAD SYSTEM ===
@@ -445,6 +448,7 @@ function updateCombo() {
 function updateComboUI() {
     const comboIndicator = document.getElementById('combo-indicator');
     const comboValue = document.getElementById('combo-value');
+    const clickButton = document.getElementById('click-target');
 
     comboValue.textContent = gameState.combo;
 
@@ -452,9 +456,23 @@ function updateComboUI() {
         comboIndicator.classList.add('active');
         if (gameState.combo >= 10) comboIndicator.classList.add('mega');
         else comboIndicator.classList.remove('mega');
+
+        // DYNAMIC SCALING: Button grows with combo
+        // Scale from 1.0 to 1.5 based on combo (caps at 50)
+        const scaleBonus = Math.min(gameState.combo / 100, 0.5); // Max +50% size
+        const scale = 1.0 + scaleBonus;
+        if (clickButton) {
+            clickButton.style.transform = `scale(${scale})`;
+            clickButton.style.transition = 'transform 0.3s ease';
+        }
     } else {
         comboIndicator.classList.remove('active');
         comboIndicator.classList.remove('mega');
+
+        // Reset to normal size
+        if (clickButton) {
+            clickButton.style.transform = 'scale(1.0)';
+        }
     }
 }
 
@@ -1145,6 +1163,60 @@ function startTimeTracking() {
 // === RESET ===
 function confirmReset() {
     resetGame();
+}
+
+// === MULTI-TOUCH SUPPORT ===
+function initMultiTouch() {
+    const clickButton = document.getElementById('click-target');
+    if (!clickButton) return;
+
+    // Disable default onclick to prevent conflicts
+    clickButton.onclick = null;
+
+    // Track active touches to prevent double-firing
+    const activeTouches = new Set();
+
+    // Handle touch events for multi-finger support
+    clickButton.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent default to avoid conflicts
+
+        // Process each new touch point
+        Array.from(e.changedTouches).forEach(touch => {
+            const touchId = touch.identifier;
+
+            // Only process if this touch is new
+            if (!activeTouches.has(touchId)) {
+                activeTouches.add(touchId);
+
+                // Create a synthetic event with proper coordinates
+                const syntheticEvent = {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY,
+                    target: clickButton
+                };
+
+                performClick(syntheticEvent);
+            }
+        });
+    }, { passive: false });
+
+    // Clean up ended touches
+    clickButton.addEventListener('touchend', (e) => {
+        Array.from(e.changedTouches).forEach(touch => {
+            activeTouches.delete(touch.identifier);
+        });
+    });
+
+    clickButton.addEventListener('touchcancel', (e) => {
+        Array.from(e.changedTouches).forEach(touch => {
+            activeTouches.delete(touch.identifier);
+        });
+    });
+
+    // Keep mouse/click support for desktop
+    clickButton.addEventListener('click', (e) => {
+        performClick(e);
+    });
 }
 
 // === GLOBAL EXPOSURE ===
