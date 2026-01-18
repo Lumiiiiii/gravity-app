@@ -461,8 +461,8 @@ function updateComboUI() {
         else comboIndicator.classList.remove('mega');
 
         // DYNAMIC SCALING: Button grows with combo
-        // Scale from 1.0 to 1.5 based on combo (caps at 50)
-        const scaleBonus = Math.min(gameState.combo / 100, 0.5); // Max +50% size
+        // Reduced scaling to prevent overlap (max +15% instead of +50%)
+        const scaleBonus = Math.min(gameState.combo / 200, 0.15);
         const scale = 1.0 + scaleBonus;
         if (clickButton) {
             // Use setProperty with 'important' to override CSS
@@ -553,8 +553,12 @@ function updateCoinColors(baseColor, darkColor, brightColor) {
     textElements.forEach(el => {
         if (el) {
             el.style.color = dark; // Use Darker variant for numbers
-            el.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`; // Glow remains base color
-            el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease';
+
+            // Add stroke for readability (black outline)
+            el.style.webkitTextStroke = '1px #000000';
+            el.style.textShadow = `0 0 10px ${color}`; // Simplified glow
+
+            el.style.transition = 'color 0.5s ease, text-shadow 0.5s ease, -webkit-text-stroke 0.5s ease';
         }
     });
 
