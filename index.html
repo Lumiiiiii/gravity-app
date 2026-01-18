@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="skin-animations.css">
     <link rel="stylesheet" href="level-progress.css">
+    <link rel="stylesheet" href="prestige-floating.css">
 </head>
 
 <body>
@@ -35,13 +36,7 @@
                         <span class="stat-label">Coins</span>
                     </div>
                 </div>
-                <div class="stat-box prestige-stat">
-                    <span class="stat-icon">⭐</span>
-                    <div class="stat-info">
-                        <span class="stat-value" id="header-prestige">0</span>
-                        <span class="stat-label">Prestige</span>
-                    </div>
-                </div>
+
                 <div class="stat-box">
                     <div class="stat-info">
                         <span class="stat-value" id="header-level">1</span>
@@ -398,15 +393,21 @@
         </div>
     </div>
 
+    <!-- PRESTIGE INDICATOR (Bottom Right) -->
+    <div class="floating-prestige-indicator" onclick="openPrestigeModal()">
+        <span class="prestige-star">⭐</span>
+        <span id="header-prestige">0</span>
+    </div>
+
     <!-- NOTIFICATION TOAST -->
     <div id="notification-toast" class="notification-toast">
         <span id="notification-text"></span>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="clicker-game.js?v=2.5.4&t=1768694000"></script>
-    <script src="telegram-integration.js?v=2.5.4&t=1768694000"></script>
-    <script src="backend-integration.js?v=2.5.4&t=1768694000"></script>
+    <script src="clicker-game.js?v=2.5.5&t=1768695000"></script>
+    <script src="telegram-integration.js?v=2.5.5&t=1768695000"></script>
+    <script src="backend-integration.js?v=2.5.5&t=1768695000"></script>
 </body>
 
 </html>

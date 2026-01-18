@@ -1,0 +1,63 @@
+/* ========== FLOATING PRESTIGE INDICATOR ========== */
+.floating-prestige-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(10, 14, 26, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 99;
+    /* Above clicker game but below modals */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.floating-prestige-indicator:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-purple);
+    box-shadow: 0 6px 25px rgba(168, 85, 247, 0.3);
+}
+
+.floating-prestige-indicator:active {
+    transform: scale(0.95);
+}
+
+.prestige-star {
+    font-size: 1.2rem;
+    animation: floatingStar 3s ease-in-out infinite;
+}
+
+@keyframes floatingStar {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(15deg) scale(1.1);
+    }
+}
+
+#header-prestige {
+    color: var(--accent-purple);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+/* Mobile Adjustment to avoid overlapping Telegram UI if needed */
+@media (max-width: 600px) {
+    .floating-prestige-indicator {
+        bottom: 80px;
+        /* Higher up to avoid navigation or bottom bars */
+        right: 15px;
+        padding: 6px 12px;
+    }
+}
