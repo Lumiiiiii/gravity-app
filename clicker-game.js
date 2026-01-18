@@ -14,6 +14,7 @@ let gameState = {
     level: 1,
     xp: 0,
     xpToNextLevel: 50,
+    levelColor: '#fbbf24', // Dynamic color for coins/counter
 
     // Upgrades
     upgrades: {
@@ -307,6 +308,7 @@ function initGame() {
     loadGameState();
     renderAllSkins();
     updateAllUI();
+    updateCoinColors(); // Apply saved level color
     startAutoClicker();
     startTimeTracking();
     equipSkin(gameState.equippedSkin);
@@ -488,8 +490,41 @@ function addXp(amount) {
         gameState.level++;
         gameState.xpToNextLevel = Math.floor(gameState.level * 50 * Math.pow(1.1, gameState.level));
 
+        // RANDOM COLOR ON LEVEL UP!
+        const vibrantColors = [
+            '#ff0080', '#00ffff', '#ff00ff', '#00ff00',
+            '#ffff00', '#ff6600', '#6600ff', '#00ff99',
+            '#ff0066', '#66ff00', '#0066ff', '#ff9900',
+            '#9900ff', '#00ffcc', '#ff3366', '#33ff66'
+        ];
+        gameState.levelColor = vibrantColors[Math.floor(Math.random() * vibrantColors.length)];
+
+        // Apply new color immediately
+        updateCoinColors();
+
         showNotification(`🆙 LEVEL UP! Lvl ${gameState.level} (+1% Power)`);
         createParticles({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 }); // Celebration
+    }
+}
+
+function updateCoinColors() {
+    const color = gameState.levelColor;
+    const elements = [
+        document.getElementById('main-score'),
+        document.getElementById('header-coins')
+    ];
+
+    elements.forEach(el => {
+        if (el) {
+            el.style.color = color;
+            el.style.textShadow = `0 0 20px ${color}, 0 0 40px ${color}`;
+        }
+    });
+
+    // Update coin emoji if exists
+    const coinIcon = document.querySelector('.stat-item .icon:last-child');
+    if (coinIcon && coinIcon.textContent === '🪙') {
+        coinIcon.style.filter = `drop-shadow(0 0 5px ${color})`;
     }
 }
 
@@ -643,6 +678,9 @@ function createSkinElement(skinId, skin) {
 
     if (isOwned) div.classList.add('owned');
     if (isEquipped) div.classList.add('equipped');
+
+    // Add rarity class for animations
+    div.classList.add(skin.rarity);
 
     const previewStyle = skin.gradient
         ? `background: ${skin.gradient};`
