@@ -1,0 +1,25 @@
+/* ========== SHOP SKIN IMAGES ========== */
+.skin-preview-img {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+    z-index: 2;
+    position: relative;
+    pointer-events: none;
+}
+
+/* Ensure preview container centers the image */
+.skin-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Fallback emoji styling */
+.skin-emoji-fallback {
+    line-height: 1;
+    pointer-events: none;
+}

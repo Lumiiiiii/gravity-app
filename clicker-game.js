@@ -738,8 +738,15 @@ function createSkinElement(skinId, skin) {
         ? formatNumber(skin.cost)
         : '💎 Premium';
 
+    // Image Handling for Shop
+    const skinImageSrc = skinId === 'default' ? 'cat-coin.png' : `skin-${skinId}.png`;
+
+    // We use an img tag with fallback to emoji if image fails to load
     div.innerHTML = `
-        <div class="skin-preview" style="${previewStyle}">${skin.emoji}</div>
+        <div class="skin-preview" style="${previewStyle}">
+            <img src="${skinImageSrc}" alt="${skin.name}" class="skin-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="skin-emoji-fallback" style="display:none; font-size: 2rem;">${skin.emoji}</span>
+        </div>
         <p class="skin-name">${skin.name}</p>
         <p class="skin-bonus" style="font-size: 10px; color: #fbbf24; margin-bottom: 4px;">${skin.bonusDesc || ''}</p>
         <span class="skin-cost">${isOwned ? (isEquipped ? 'EQUIPPED' : 'OWNED') : costText}</span>
@@ -790,9 +797,18 @@ function equipSkin(skinId) {
     const mainScoreCoinIcon = document.querySelector('.score-display img.cat-coin-img');
     const clickButtonImg = document.getElementById('click-button-img');
 
-    if (headerCoinIcon) headerCoinIcon.src = skinImageSrc;
-    if (mainScoreCoinIcon) mainScoreCoinIcon.src = skinImageSrc;
-    if (clickButtonImg) clickButtonImg.src = skinImageSrc;
+    const updateImage = (imgElement) => {
+        if (!imgElement) return;
+        imgElement.src = skinImageSrc;
+        imgElement.onerror = () => {
+            imgElement.src = 'cat-coin.png'; // Fallback to default if skin image missing
+            imgElement.onerror = null; // Prevent infinite loop
+        };
+    };
+
+    if (headerCoinIcon) updateImage(headerCoinIcon);
+    if (mainScoreCoinIcon) updateImage(mainScoreCoinIcon);
+    if (clickButtonImg) updateImage(clickButtonImg);
 
     // Update button styling
     const btn = document.getElementById('click-target');
