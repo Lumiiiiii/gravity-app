@@ -4,7 +4,8 @@
     height: 32px;
     object-fit: contain;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: text-bottom;
+    /* Better alignment with text */
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 
@@ -13,14 +14,25 @@
     width: 28px;
     height: 28px;
     margin-right: 8px;
+    vertical-align: middle;
 }
 
-/* Main score cat coin */
+/* Main score cat coin - better alignment */
+.score-display {
+    display: flex;
+    align-items: center;
+    /* Vertically center items */
+    justify-content: center;
+    flex-direction: row;
+}
+
 .score-display .cat-coin-img {
     width: 48px;
     height: 48px;
     margin-right: 12px;
     animation: gentleBounce 3s ease-in-out infinite;
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 @keyframes gentleBounce {

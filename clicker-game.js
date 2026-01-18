@@ -462,8 +462,9 @@ function updateComboUI() {
         const scaleBonus = Math.min(gameState.combo / 100, 0.5); // Max +50% size
         const scale = 1.0 + scaleBonus;
         if (clickButton) {
-            clickButton.style.transform = `scale(${scale})`;
-            clickButton.style.transition = 'transform 0.3s ease';
+            // Use setProperty with 'important' to override CSS
+            clickButton.style.setProperty('transform', `scale(${scale})`, 'important');
+            clickButton.style.setProperty('transition', 'transform 0.3s ease', 'important');
         }
     } else {
         comboIndicator.classList.remove('active');
@@ -471,7 +472,7 @@ function updateComboUI() {
 
         // Reset to normal size
         if (clickButton) {
-            clickButton.style.transform = 'scale(1.0)';
+            clickButton.style.setProperty('transform', 'scale(1.0)', 'important');
         }
     }
 }

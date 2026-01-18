@@ -299,6 +299,10 @@ body::before {
     outline-width: 0 !important;
     outline-style: none !important;
     outline-color: transparent !important;
+
+    /* For combo scaling */
+    transform-origin: center center;
+    will-change: transform;
 }
 
 .click-target::before,
