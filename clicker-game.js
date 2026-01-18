@@ -18,15 +18,15 @@ let gameState = {
 
     // Upgrades
     upgrades: {
-        clickPower: { level: 1, baseCost: 20, costMultiplier: 1.5 },
-        autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5 },
-        critChance: { level: 0, baseCost: 100, costMultiplier: 1.8 },
-        multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0 },
-        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 },
-        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 },
-        luckBoost: { level: 0, baseCost: 1500, costMultiplier: 2.2 },
-        speedClick: { level: 0, baseCost: 3000, costMultiplier: 2.8 },
-        megaMultiplier: { level: 0, baseCost: 5000, costMultiplier: 3.0 }
+        clickPower: { level: 1, baseCost: 20, costMultiplier: 1.5, unlockLevel: 1 },
+        critChance: { level: 0, baseCost: 100, costMultiplier: 1.8, unlockLevel: 2 },
+        multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0, unlockLevel: 5 },
+        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7, unlockLevel: 7 },
+        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5, unlockLevel: 10 },
+        luckBoost: { level: 0, baseCost: 1500, costMultiplier: 2.2, unlockLevel: 13 },
+        speedClick: { level: 0, baseCost: 3000, costMultiplier: 2.8, unlockLevel: 15 },
+        megaMultiplier: { level: 0, baseCost: 5000, costMultiplier: 3.0, unlockLevel: 20 },
+        autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5, unlockLevel: 1 } // Basic
     },
 
     // Skins
@@ -63,7 +63,8 @@ const SKINS = {
         color: '#fca5a5',
         shadow: 'rgba(252, 165, 165, 0.5)',
         emoji: '⚡',
-        particles: false
+        particles: false,
+        unlockLevel: 1
     },
     'neon-blue': {
         name: 'Neon Blue',
@@ -74,7 +75,8 @@ const SKINS = {
         emoji: '💎',
         particles: false,
         bonusDesc: '+5% Coins',
-        bonus: { type: 'multiplier', value: 0.05 }
+        bonus: { type: 'multiplier', value: 0.05 },
+        unlockLevel: 1
     },
     'toxic-green': {
         name: 'Toxic Green',
@@ -85,7 +87,8 @@ const SKINS = {
         emoji: '☢️',
         particles: false,
         bonusDesc: '+10% Auto Click',
-        bonus: { type: 'autoClick', value: 0.10 }
+        bonus: { type: 'autoClick', value: 0.10 },
+        unlockLevel: 3
     },
     'hot-pink': {
         name: 'Hot Pink',
@@ -96,7 +99,8 @@ const SKINS = {
         emoji: '💖',
         particles: false,
         bonusDesc: '+5% Crit Chance',
-        bonus: { type: 'critChance', value: 0.05 }
+        bonus: { type: 'critChance', value: 0.05 },
+        unlockLevel: 3
     },
     'electric-violet': {
         name: 'Electric Violet',
@@ -105,7 +109,8 @@ const SKINS = {
         color: '#8b5cf6',
         shadow: 'rgba(139, 92, 246, 0.6)',
         emoji: '⚡',
-        particles: false
+        particles: false,
+        unlockLevel: 3
     },
     'ocean-breeze': {
         name: 'Ocean Breeze',
@@ -116,7 +121,8 @@ const SKINS = {
         emoji: '🌊',
         particles: false,
         bonusDesc: '+20% Auto Click',
-        bonus: { type: 'autoClick', value: 0.20 }
+        bonus: { type: 'autoClick', value: 0.20 },
+        unlockLevel: 6
     },
 
     // RARE (100k - 500k)
@@ -130,7 +136,8 @@ const SKINS = {
         particles: true,
         particleColor: '#fbbf24',
         bonusDesc: '+20% Coins',
-        bonus: { type: 'multiplier', value: 0.20 }
+        bonus: { type: 'multiplier', value: 0.20 },
+        unlockLevel: 10 // Based on progression gap
     },
     'purple-haze': {
         name: 'Purple Haze',
@@ -142,7 +149,8 @@ const SKINS = {
         particles: true,
         particleColor: '#c084fc',
         bonusDesc: '+10% Crit Chance',
-        bonus: { type: 'critChance', value: 0.10 }
+        bonus: { type: 'critChance', value: 0.10 },
+        unlockLevel: 10
     },
     'cyber-cyan': {
         name: 'Cyber Cyan',
@@ -154,7 +162,8 @@ const SKINS = {
         particles: true,
         particleColor: '#22d3ee',
         bonusDesc: '+25% Auto Click',
-        bonus: { type: 'autoClick', value: 0.25 }
+        bonus: { type: 'autoClick', value: 0.25 },
+        unlockLevel: 10
     },
     'crimson-fury': {
         name: 'Crimson Fury',
@@ -166,7 +175,8 @@ const SKINS = {
         particles: true,
         particleColor: '#ef4444',
         bonusDesc: '+15% Crit Chance',
-        bonus: { type: 'critChance', value: 0.15 }
+        bonus: { type: 'critChance', value: 0.15 },
+        unlockLevel: 15
     },
     'solar-flare': {
         name: 'Solar Flare',
@@ -177,7 +187,8 @@ const SKINS = {
         emoji: '☀️',
         particles: true,
         bonusDesc: '+30% Coins',
-        bonus: { type: 'multiplier', value: 0.30 }
+        bonus: { type: 'multiplier', value: 0.30 },
+        unlockLevel: 15
     },
     'midnight-shadow': {
         name: 'Midnight Shadow',
@@ -189,7 +200,8 @@ const SKINS = {
         particles: true,
         particleColor: '#818cf8',
         bonusDesc: '+25% Coins',
-        bonus: { type: 'multiplier', value: 0.25 }
+        bonus: { type: 'multiplier', value: 0.25 },
+        unlockLevel: 17
     },
 
     // EPIC (1M - 5M)
@@ -203,7 +215,8 @@ const SKINS = {
         emoji: '🌌',
         particles: true,
         bonusDesc: '+50% Auto Click',
-        bonus: { type: 'autoClick', value: 0.50 }
+        bonus: { type: 'autoClick', value: 0.50 },
+        unlockLevel: 20
     },
     'phoenix': {
         name: 'Phoenix Fire',
@@ -216,7 +229,8 @@ const SKINS = {
         particles: true,
         particleColor: '#fb923c',
         bonusDesc: '+40% Auto Click',
-        bonus: { type: 'autoClick', value: 0.40 }
+        bonus: { type: 'autoClick', value: 0.40 },
+        unlockLevel: 20
     },
     'dragon-soul': {
         name: 'Dragon Soul',
@@ -229,7 +243,8 @@ const SKINS = {
         particles: true,
         particleColor: '#f87171',
         bonusDesc: '+20% Crit Chance',
-        bonus: { type: 'critChance', value: 0.20 }
+        bonus: { type: 'critChance', value: 0.20 },
+        unlockLevel: 20
     },
     'ice-crystal': {
         name: 'Ice Crystal',
@@ -242,7 +257,8 @@ const SKINS = {
         particles: true,
         particleColor: '#38bdf8',
         bonusDesc: '+40% Coins',
-        bonus: { type: 'multiplier', value: 0.40 }
+        bonus: { type: 'multiplier', value: 0.40 },
+        unlockLevel: 23
     },
     'galaxy': {
         name: 'Galaxy Burst',
@@ -255,10 +271,11 @@ const SKINS = {
         particles: true,
         particleColor: '#a78bfa',
         bonusDesc: '+75% Auto Click',
-        bonus: { type: 'autoClick', value: 0.75 }
+        bonus: { type: 'autoClick', value: 0.75 },
+        unlockLevel: 25
     },
 
-    // LEGENDARY (10M+ or Premium)
+    // LEGENDARY
     'matrix': {
         name: 'The Matrix',
         rarity: 'legendary',
@@ -271,7 +288,8 @@ const SKINS = {
         particleColor: '#4ade80',
         special: 'rain',
         bonusDesc: '+50% Coins & +20% Crit',
-        bonus: { type: 'multiplier', value: 0.50 } // Basic bonus, tough to do double bonus without refactor but this is good enough
+        bonus: { type: 'multiplier', value: 0.50 },
+        unlockLevel: 30
     },
     'rainbow': {
         name: 'Rainbow Dream',
@@ -285,7 +303,8 @@ const SKINS = {
         particleColor: '#ff0080',
         special: 'rainbow',
         bonusDesc: '2x ALL COINS',
-        bonus: { type: 'multiplier', value: 1.0 } // +100% = 2x
+        bonus: { type: 'multiplier', value: 1.0 },
+        unlockLevel: 1
     },
     'cosmic': {
         name: 'Cosmic Energy',
@@ -299,7 +318,8 @@ const SKINS = {
         particleColor: '#ffffff',
         special: 'stars',
         bonusDesc: '2x CRIT CHANCE',
-        bonus: { type: 'critChance', value: 1.0 } // +100%
+        bonus: { type: 'critChance', value: 1.0 },
+        unlockLevel: 1
     }
 };
 
@@ -519,22 +539,19 @@ function addXp(amount) {
     if (gameState.xp >= gameState.xpToNextLevel) {
         gameState.xp -= gameState.xpToNextLevel;
         gameState.level++;
-        gameState.xpToNextLevel = Math.floor(gameState.level * 50 * Math.pow(1.1, gameState.level));
 
-        // RANDOM COLOR ON LEVEL UP!
-        const vibrantColors = [
-            '#ff0080', '#00ffff', '#ff00ff', '#00ff00',
-            '#ffff00', '#ff6600', '#6600ff', '#00ff99',
-            '#ff0066', '#66ff00', '#0066ff', '#ff9900',
-            '#9900ff', '#00ffcc', '#ff3366', '#33ff66'
-        ];
-        gameState.levelColor = vibrantColors[Math.floor(Math.random() * vibrantColors.length)];
+        // BALANCED XP FORMULA: Base 50, scales with power 1.5
+        // Level 1 -> 50, 2 -> 141, 10 -> 1581, 30 -> ~8000
+        gameState.xpToNextLevel = Math.floor(50 * Math.pow(gameState.level, 1.5));
 
-        // Apply new color immediately - NO, we keep skin theme
-        // updateCoinColors(); <-- Removed random update
+        // RANDOM COLOR ON LEVEL UP REMOVED -> Skin Theme handles it now
 
         showNotification(`🆙 LEVEL UP! Lvl ${gameState.level} (+1% Power)`);
         createParticles({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 }); // Celebration
+
+        // Refresh UI to show unlocked items
+        renderAllSkins();
+        updateAllUI();
     }
 }
 
@@ -694,18 +711,33 @@ function attemptPrestige() {
 function confirmPrestige() {
     const pointsGain = Math.floor(1 + gameState.coins / 100000000);
 
-    // Reset
+    // PERSISTENCE CHECK: We save Level/XP before resetting
+    const savedLevel = gameState.level;
+    const savedXp = gameState.xp;
+    const savedXpReq = gameState.xpToNextLevel;
+    const savedColor = gameState.levelColor;
+
+    // Reset keeping upgrades definition which now includes unlockLevels
     gameState.coins = 0;
     gameState.totalClicks = 0;
     gameState.combo = 1;
     gameState.upgrades = {
-        clickPower: { level: 1, baseCost: 20, costMultiplier: 1.5 },
-        autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5 },
-        critChance: { level: 0, baseCost: 100, costMultiplier: 1.8 },
-        multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0 },
-        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7 },
-        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5 }
+        clickPower: { level: 1, baseCost: 20, costMultiplier: 1.5, unlockLevel: 1 },
+        autoClicker: { level: 0, baseCost: 50, costMultiplier: 1.5, unlockLevel: 1 },
+        critChance: { level: 0, baseCost: 100, costMultiplier: 1.8, unlockLevel: 2 },
+        multiplier: { level: 0, baseCost: 500, costMultiplier: 2.0, unlockLevel: 5 },
+        comboBonus: { level: 0, baseCost: 1000, costMultiplier: 1.7, unlockLevel: 7 },
+        particleEffects: { level: 0, baseCost: 2500, costMultiplier: 2.5, unlockLevel: 10 },
+        luckBoost: { level: 0, baseCost: 1500, costMultiplier: 2.2, unlockLevel: 13 },
+        speedClick: { level: 0, baseCost: 3000, costMultiplier: 2.8, unlockLevel: 15 },
+        megaMultiplier: { level: 0, baseCost: 5000, costMultiplier: 3.0, unlockLevel: 20 }
     };
+
+    // Restore Persistent Data
+    gameState.level = savedLevel;
+    gameState.xp = savedXp;
+    gameState.xpToNextLevel = savedXpReq;
+    gameState.levelColor = savedColor;
 
     // Keep skins, premium status
     // Gain prestige
@@ -715,6 +747,9 @@ function confirmPrestige() {
     closePrestigeModal();
     showNotification(`⭐ PRESTIGED! +${pointsGain} Prestige Points!`);
     updateAllUI();
+
+    // Ensure theme persists
+    if (gameState.equippedSkin) equipSkin(gameState.equippedSkin);
 }
 
 function closePrestigeModal() {
@@ -749,8 +784,13 @@ function createSkinElement(skinId, skin) {
     const isOwned = gameState.ownedSkins.includes(skinId);
     const isEquipped = gameState.equippedSkin === skinId;
 
+    // Level checking logic
+    const unlockLevel = skin.unlockLevel || 1;
+    const isLocked = gameState.level < unlockLevel;
+
     if (isOwned) div.classList.add('owned');
     if (isEquipped) div.classList.add('equipped');
+    if (isLocked) div.classList.add('locked');
 
     // Add rarity class for animations
     div.classList.add(skin.rarity);
@@ -771,10 +811,11 @@ function createSkinElement(skinId, skin) {
         <div class="skin-preview" style="${previewStyle}">
             <img src="${skinImageSrc}" alt="${skin.name}" class="skin-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <span class="skin-emoji-fallback" style="display:none; font-size: 2rem;">${skin.emoji}</span>
+            ${isLocked ? `<div class="lock-overlay"><span class="lock-icon">🔒</span><span class="lock-text">Lv ${unlockLevel}</span></div>` : ''}
         </div>
         <p class="skin-name">${skin.name}</p>
         <p class="skin-bonus" style="font-size: 10px; color: #fbbf24; margin-bottom: 4px;">${skin.bonusDesc || ''}</p>
-        <span class="skin-cost">${isOwned ? (isEquipped ? 'EQUIPPED' : 'OWNED') : costText}</span>
+        <span class="skin-cost">${isOwned ? (isEquipped ? 'EQUIPPED' : 'OWNED') : (isLocked ? `Lv ${unlockLevel}` : costText)}</span>
     `;
 
     return div;
@@ -783,6 +824,13 @@ function createSkinElement(skinId, skin) {
 function buySkin(skinId) {
     const skin = SKINS[skinId];
     if (!skin) return;
+
+    // Check Level Lock
+    const unlockLevel = skin.unlockLevel || 1;
+    if (gameState.level < unlockLevel) {
+        showNotification(`🔒 Need Level ${unlockLevel} to unlock!`);
+        return;
+    }
 
     if (gameState.ownedSkins.includes(skinId)) {
         equipSkin(skinId);
@@ -997,15 +1045,32 @@ function updateAllUI() {
         for (const [type, upgrade] of Object.entries(gameState.upgrades)) {
             const levelEl = document.getElementById(`level-${type}`);
             const costEl = document.getElementById(`cost-${type}`);
+            const unlockLevel = upgrade.unlockLevel || 1;
+            const isLocked = gameState.level < unlockLevel;
 
             if (levelEl) levelEl.textContent = upgrade.level;
-            if (costEl) {
-                const cost = getUpgradeCost(type);
-                costEl.textContent = formatNumber(cost);
 
-                // Glow if affordable
+            if (costEl) {
                 const upgradeEl = costEl.closest('.upgrade-item');
-                if (upgradeEl) {
+
+                if (isLocked && upgradeEl) {
+                    upgradeEl.classList.add('locked-upgrade');
+                    // Add lock overlay if not present
+                    if (!upgradeEl.querySelector('.lock-overlay')) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'lock-overlay';
+                        overlay.innerHTML = `<span class="lock-icon">🔒</span><span>Lv ${unlockLevel}</span>`;
+                        upgradeEl.appendChild(overlay);
+                    }
+                } else if (!isLocked && upgradeEl) {
+                    upgradeEl.classList.remove('locked-upgrade');
+                    const overlay = upgradeEl.querySelector('.lock-overlay');
+                    if (overlay) overlay.remove();
+
+                    const cost = getUpgradeCost(type);
+                    costEl.textContent = formatNumber(cost);
+
+                    // Glow if affordable
                     if (gameState.coins >= cost) {
                         upgradeEl.classList.add('affordable');
                     } else {
