@@ -58,6 +58,7 @@ async function saveToCloud() {
                     level: gameState.level,
                     xp: gameState.xp,
                     xpToNextLevel: gameState.xpToNextLevel,
+                    levelColor: gameState.levelColor || '#fbbf24',
                     upgrades: gameState.upgrades,
                     ownedSkins: gameState.ownedSkins,
                     equippedSkin: gameState.equippedSkin,
@@ -115,6 +116,7 @@ async function loadFromCloud() {
             gameState.level = data.gameState.level || 1;
             gameState.xp = data.gameState.xp || 0;
             gameState.xpToNextLevel = data.gameState.xpToNextLevel || 50;
+            gameState.levelColor = data.gameState.levelColor || '#fbbf24';
 
             gameState.ownedSkins = data.gameState.ownedSkins || ['default'];
             gameState.equippedSkin = data.gameState.equippedSkin || 'default';
