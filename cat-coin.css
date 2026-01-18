@@ -1,0 +1,55 @@
+/* ========== CAT COIN IMAGE STYLING ========== */
+.cat-coin-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Header cat coin */
+.stat-box .cat-coin-img {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+}
+
+/* Main score cat coin */
+.score-display .cat-coin-img {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+    animation: gentleBounce 3s ease-in-out infinite;
+}
+
+@keyframes gentleBounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.05);
+    }
+}
+
+/* Hover effect */
+.cat-coin-img:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: brightness(1.2);
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+    .stat-box .cat-coin-img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .score-display .cat-coin-img {
+        width: 40px;
+        height: 40px;
+    }
+}
