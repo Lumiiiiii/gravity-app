@@ -364,6 +364,7 @@ function loadGameState() {
             gameState.level = loaded.level || 1;
             gameState.xp = loaded.xp || 0;
             gameState.xpToNextLevel = loaded.xpToNextLevel || 50;
+            gameState.levelColor = loaded.levelColor || '#fbbf24';
             gameState.ownedSkins = loaded.ownedSkins || ['default'];
             gameState.equippedSkin = loaded.equippedSkin || 'default';
             gameState.highestCombo = loaded.highestCombo || 1;
@@ -1030,6 +1031,10 @@ function updateAllUI() {
             const progress = Math.min(100, Math.max(0, (gameState.xp / gameState.xpToNextLevel) * 100));
             const progressBar = document.getElementById('level-progress-bar');
             if (progressBar) progressBar.style.width = `${progress}%`;
+
+            // Update XP Text
+            const xpText = document.getElementById('xp-text');
+            if (xpText) xpText.textContent = `${Math.floor(gameState.xp)}/${Math.floor(gameState.xpToNextLevel)}`;
         }
 
         // Main score
