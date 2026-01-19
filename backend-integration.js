@@ -91,27 +91,35 @@ async function loadFromCloud() {
 
         if (data.found && data.gameState) {
             // CONFLICT RESOLUTION:
-            // Only overwrite local data if cloud data is NEWER or if local data is basically empty (new session)
             const localSaveTime = gameState.lastSaveTime || 0;
             const cloudSaveTime = data.gameState.lastSaveTime || 0;
 
+            // Check if this is a new device (no previous save in localStorage)
+            const isNewDevice = !localStorage.getItem('neonClickerSave');
+
             console.log('🔍 Conflict Check:');
+            console.log('  New Device:', isNewDevice);
             console.log('  Local Level:', gameState.level, '| Cloud Level:', data.gameState.level);
             console.log('  Local Coins:', gameState.totalCoinsEarned, '| Cloud Coins:', data.gameState.totalCoinsEarned);
             console.log('  Local Time:', new Date(localSaveTime).toISOString(), '| Cloud Time:', new Date(cloudSaveTime).toISOString());
 
-            // If local progress is significantly higher (e.g. played offline), keep local
-            // Check BOTH level AND coins to determine which is more recent
-            const localIsBetter = (
-                (gameState.level > (data.gameState.level || 1)) ||
-                (gameState.totalCoinsEarned > (data.gameState.totalCoinsEarned || 0) && localSaveTime >= cloudSaveTime)
-            );
+            // ALWAYS load cloud on new device
+            if (isNewDevice && data.gameState.level > 1) {
+                console.log('📱 New device detected! Loading cloud save...');
+                // Skip local comparison, load cloud directly
+            }
+            // If local progress is significantly higher, keep local
+            else {
+                const localIsBetter = (
+                    (gameState.level > (data.gameState.level || 1)) ||
+                    (gameState.totalCoinsEarned > (data.gameState.totalCoinsEarned || 0) && localSaveTime >= cloudSaveTime)
+                );
 
-            if (localIsBetter) {
-                console.log('⚠️ Local save is better. Keeping local and updating cloud.');
-                // Force a cloud save now to update server with our local data
-                saveToCloud();
-                return false;
+                if (localIsBetter) {
+                    console.log('⚠️ Local save is better. Keeping local and updating cloud.');
+                    saveToCloud();
+                    return false;
+                }
             }
 
             console.log('☁️ Downloading cloud save...');
