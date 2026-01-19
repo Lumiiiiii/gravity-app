@@ -95,11 +95,21 @@ async function loadFromCloud() {
             const localSaveTime = gameState.lastSaveTime || 0;
             const cloudSaveTime = data.gameState.lastSaveTime || 0;
 
+            console.log('🔍 Conflict Check:');
+            console.log('  Local Level:', gameState.level, '| Cloud Level:', data.gameState.level);
+            console.log('  Local Coins:', gameState.totalCoinsEarned, '| Cloud Coins:', data.gameState.totalCoinsEarned);
+            console.log('  Local Time:', new Date(localSaveTime).toISOString(), '| Cloud Time:', new Date(cloudSaveTime).toISOString());
+
             // If local progress is significantly higher (e.g. played offline), keep local
-            // Using totalCoinsEarned as a proxy for progress if timestamps are messy
-            if (gameState.totalCoinsEarned > (data.gameState.totalCoinsEarned || 0) && localSaveTime > cloudSaveTime) {
-                console.log('⚠️ Local save is newer/better. Keeping local.');
-                // Force a cloud save now to update server
+            // Check BOTH level AND coins to determine which is more recent
+            const localIsBetter = (
+                (gameState.level > (data.gameState.level || 1)) ||
+                (gameState.totalCoinsEarned > (data.gameState.totalCoinsEarned || 0) && localSaveTime >= cloudSaveTime)
+            );
+
+            if (localIsBetter) {
+                console.log('⚠️ Local save is better. Keeping local and updating cloud.');
+                // Force a cloud save now to update server with our local data
                 saveToCloud();
                 return false;
             }
@@ -138,6 +148,7 @@ async function loadFromCloud() {
             if (window.updateCoinColors) window.updateCoinColors();
 
             console.log('☁️ Loaded from cloud successfully');
+            console.log('  Final Level:', gameState.level, 'XP:', gameState.xp);
             return true;
         }
         return false;

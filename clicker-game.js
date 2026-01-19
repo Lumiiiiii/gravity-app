@@ -345,6 +345,8 @@ function initGame() {
 
 // === SAVE/LOAD SYSTEM ===
 function saveGameState() {
+    // Update timestamp before saving
+    gameState.lastSaveTime = Date.now();
     localStorage.setItem('neonClickerSave', JSON.stringify(gameState));
 }
 
@@ -369,6 +371,7 @@ function loadGameState() {
             gameState.equippedSkin = loaded.equippedSkin || 'default';
             gameState.highestCombo = loaded.highestCombo || 1;
             gameState.playTime = loaded.playTime || 0;
+            gameState.lastSaveTime = loaded.lastSaveTime || Date.now();
 
             // Merge upgrades (preserve new upgrades if they don't exist in save)
             if (loaded.upgrades) {
