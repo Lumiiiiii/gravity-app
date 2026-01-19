@@ -248,6 +248,32 @@ function closeDailyRewardModal() {
 }
 
 // === LEADERBOARD ===
+function getNextResetTime() {
+    const now = new Date();
+    const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday
+    const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+
+    const nextMonday = new Date(now);
+    nextMonday.setUTCDate(now.getUTCDate() + daysUntilMonday);
+    nextMonday.setUTCHours(0, 0, 0, 0);
+
+    return nextMonday;
+}
+
+function formatTimeUntilReset() {
+    const now = new Date();
+    const nextReset = getNextResetTime();
+    const diff = nextReset - now;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+}
+
 async function loadLeaderboard() {
     const container = document.getElementById('leaderboard-list');
     if (!container) {
@@ -277,16 +303,35 @@ async function loadLeaderboard() {
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
-        const leaderboard = await response.json();
-        console.log('✅ Leaderboard loaded:', leaderboard ? leaderboard.length : 0, 'players');
+        const data = await response.json();
+        console.log('📊 Leaderboard data received:', data);
 
-        if (!leaderboard || leaderboard.length === 0) {
-            container.innerHTML = '<div class="leaderboard-empty">No players yet. Be the first!</div>';
+        if (!Array.isArray(data)) {
+            console.error('❌ Invalid leaderboard format');
+            container.innerHTML = '<p style="color: #ef4444;">Error loading leaderboard</p>';
+            return;
+        }
+
+        // Add reset countdown at the top
+        const resetTime = formatTimeUntilReset();
+        const resetInfo = document.createElement('div');
+        resetInfo.style.cssText = 'text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; color: #a3e635; font-size: 12px; font-weight: bold;';
+        resetInfo.innerHTML = `⏱️ Weekly Reset in: ${resetTime}`;
+
+        container.innerHTML = ''; // Clear existing
+        container.appendChild(resetInfo);
+
+        if (data.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.textContent = 'No players yet. Be the first!';
+            emptyMsg.style.textAlign = 'center';
+            emptyMsg.style.color = '#9ca3af';
+            container.appendChild(emptyMsg);
             return;
         }
 
         // Render leaderboard
-        container.innerHTML = leaderboard.map((player, index) => {
+        const leaderboardHtml = data.map((player, index) => {
             // Highlight current user
             const isMe = currentUserId && player.telegramId && player.telegramId.toString() === currentUserId.toString();
             const rankClass = index < 3 ? `rank-${index + 1}` : '';
@@ -299,10 +344,17 @@ async function loadLeaderboard() {
                     <div class="player-name">${player.name} ${isMe ? '(You)' : ''}</div>
                     <div class="player-prestige">⭐ Prestige ${player.prestige || 0}</div>
                 </div>
-                <div class="player-score">💰 ${formatNumber(player.coins)}</div>
+                <div class="player-coins">${formatNumber(player.coins)}</div>
             </div>
             `;
         }).join('');
+
+        // Append to container (after reset info)
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = leaderboardHtml;
+        while (tempDiv.firstChild) {
+            container.appendChild(tempDiv.firstChild);
+        }
 
         // Also update own rank if possible
         if (currentUserId && window.updateUserRank) {
