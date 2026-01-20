@@ -1,31 +1,27 @@
 /* ========== CLICK BUTTON IMAGE STYLING ========== */
 .click-button-img {
-    width: 120px;
-    height: 120px;
+    width: 180px;
+    height: 180px;
     object-fit: contain;
     pointer-events: none;
     /* Don't intercept clicks */
     user-select: none;
-    filter: drop-shadow(0 0 20px currentColor);
     transition: filter 0.3s ease, transform 0.2s ease;
 }
 
-/* Scale image with button on combo */
-.click-target:active .click-button-img {
-    transform: scale(0.9);
-}
+/* Scale image with button on combo - REMOVED since parent scales */
 
 /* Responsive sizing */
 @media (max-width: 600px) {
     .click-button-img {
-        width: 100px;
-        height: 100px;
+        width: 150px;
+        height: 150px;
     }
 }
 
 @media (max-width: 400px) {
     .click-button-img {
-        width: 80px;
-        height: 80px;
+        width: 120px;
+        height: 120px;
     }
 }

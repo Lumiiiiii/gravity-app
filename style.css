@@ -272,12 +272,12 @@ body::before {
     height: 200px;
     border-radius: 50%;
     font-size: 6rem;
-    border: 5px solid #fca5a5;
-    background: rgba(252, 165, 165, 0.15);
+    border: none;
+    background: transparent;
     color: #fca5a5;
     cursor: pointer;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 40px rgba(252, 165, 165, 0.4);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -313,21 +313,24 @@ body::before {
 }
 
 .click-target:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 60px rgba(252, 165, 165, 0.6);
+    transform: scale(1.05);
+    box-shadow: none;
 }
 
-.click-target:active {
-    transform: scale(0.95);
+.click-target:active,
+.click-target.active-touch {
+    transform: scale(0.98) !important;
+    /* Subtle press effect, preserves combo size */
     /* No outline on active */
     outline: none !important;
     -webkit-tap-highlight-color: transparent !important;
+    box-shadow: none;
 }
 
 .click-target:focus {
     /* No outline on focus */
     outline: none !important;
-    box-shadow: 0 0 40px rgba(252, 165, 165, 0.4) !important;
+    box-shadow: none !important;
 }
 
 .click-target:focus-visible {
@@ -342,17 +345,14 @@ body::before {
 @keyframes clickPulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 0 40px rgba(252, 165, 165, 0.4);
     }
 
     50% {
         transform: scale(1.15);
-        box-shadow: 0 0 80px rgba(252, 165, 165, 0.8), inset 0 0 30px rgba(252, 165, 165, 0.5);
     }
 
     100% {
         transform: scale(1);
-        box-shadow: 0 0 40px rgba(252, 165, 165, 0.4);
     }
 }
 

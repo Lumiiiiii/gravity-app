@@ -489,9 +489,9 @@ function updateComboUI() {
         const scaleBonus = Math.min(gameState.combo / 200, 0.15);
         const scale = 1.0 + scaleBonus;
         if (clickButton) {
-            // Use setProperty with 'important' to override CSS
-            clickButton.style.setProperty('transform', `scale(${scale})`, 'important');
-            clickButton.style.setProperty('transition', 'transform 0.3s ease', 'important');
+            // Use setProperty without 'important' so CSS active/hover can override
+            clickButton.style.setProperty('transform', `scale(${scale})`);
+            clickButton.style.setProperty('transition', 'transform 0.3s ease');
         }
     } else {
         comboIndicator.classList.remove('active');
@@ -499,7 +499,7 @@ function updateComboUI() {
 
         // Reset to normal size
         if (clickButton) {
-            clickButton.style.setProperty('transform', 'scale(1.0)', 'important');
+            clickButton.style.setProperty('transform', 'scale(1.0)');
         }
     }
 }
@@ -888,18 +888,16 @@ function equipSkin(skinId) {
     if (clickButtonImg) updateImage(clickButtonImg);
 
     // Update button styling
+    // Update button styling - REMOVED VISUALS AS REQUESTED
     const btn = document.getElementById('click-target');
 
-    if (skin.gradient) {
-        btn.style.background = skin.gradient;
-        btn.style.borderColor = skin.color;
-    } else {
-        btn.style.background = `${skin.color}22`;
-        btn.style.borderColor = skin.color;
-        btn.style.color = skin.color;
-    }
+    // Clean style to ensure no aura/circle
+    btn.style.background = 'transparent';
+    btn.style.borderColor = 'transparent';
+    btn.style.boxShadow = 'none';
 
-    btn.style.boxShadow = `0 0 40px ${skin.shadow}`;
+    // We only set color if it's needed for other effects, but visual box is removed
+    btn.style.color = skin.color;
 
     // Update particles if needed
     if (skin.particles) {
@@ -1358,6 +1356,9 @@ function initMultiTouch() {
     clickButton.addEventListener('touchstart', (e) => {
         e.preventDefault(); // Prevent default to avoid conflicts
 
+        // Add visual feedback class MANUALLY since preventDefault kills :active
+        clickButton.classList.add('active-touch');
+
         // Process each new touch point
         Array.from(e.changedTouches).forEach(touch => {
             const touchId = touch.identifier;
@@ -1380,12 +1381,18 @@ function initMultiTouch() {
 
     // Clean up ended touches
     clickButton.addEventListener('touchend', (e) => {
+        // Remove visual feedback
+        clickButton.classList.remove('active-touch');
+
         Array.from(e.changedTouches).forEach(touch => {
             activeTouches.delete(touch.identifier);
         });
     });
 
     clickButton.addEventListener('touchcancel', (e) => {
+        // Remove visual feedback
+        clickButton.classList.remove('active-touch');
+
         Array.from(e.changedTouches).forEach(touch => {
             activeTouches.delete(touch.identifier);
         });
