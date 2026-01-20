@@ -276,7 +276,10 @@ body::before {
     background: transparent;
     color: #fca5a5;
     cursor: pointer;
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Use CSS variable for combo scaling, default to 1 */
+    transform: scale(var(--combo-scale, 1));
+    transition: transform 0.1s ease-out;
+    /* Direct smooth transition, no bounce */
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -313,14 +316,14 @@ body::before {
 }
 
 .click-target:hover {
-    transform: scale(1.05);
+    transform: scale(calc(var(--combo-scale, 1) * 1.05));
     box-shadow: none;
 }
 
 .click-target:active,
 .click-target.active-touch {
-    transform: scale(0.98) !important;
-    /* Subtle press effect, preserves combo size */
+    /* Grow 5% larger than the current combo scale when clicking */
+    transform: scale(calc(var(--combo-scale, 1) * 1.05)) !important;
     /* No outline on active */
     outline: none !important;
     -webkit-tap-highlight-color: transparent !important;
@@ -339,7 +342,8 @@ body::before {
 }
 
 .click-target.pulse {
-    animation: clickPulse 0.3s ease-out;
+    /* Animation removed to prevent conflict with active state */
+    /* animation: clickPulse 0.3s ease-out; */
 }
 
 @keyframes clickPulse {
@@ -348,7 +352,7 @@ body::before {
     }
 
     50% {
-        transform: scale(1.15);
+        transform: scale(1.08);
     }
 
     100% {

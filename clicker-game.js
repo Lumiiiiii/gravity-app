@@ -475,7 +475,6 @@ function updateCombo() {
 function updateComboUI() {
     const comboIndicator = document.getElementById('combo-indicator');
     const comboValue = document.getElementById('combo-value');
-    const clickButton = document.getElementById('click-target');
 
     comboValue.textContent = gameState.combo;
 
@@ -484,22 +483,22 @@ function updateComboUI() {
         if (gameState.combo >= 10) comboIndicator.classList.add('mega');
         else comboIndicator.classList.remove('mega');
 
-        // DYNAMIC SCALING: Button grows with combo
-        // Reduced scaling to prevent overlap (max +15% instead of +50%)
-        const scaleBonus = Math.min(gameState.combo / 200, 0.15);
+        // DYNAMIC SCALING: Button grows with combo via CSS Variable
+        // Grows up to +75% size (scale 1.75) at combo 75
+        const scaleBonus = Math.min(gameState.combo * 0.01, 0.75);
         const scale = 1.0 + scaleBonus;
+
+        const clickButton = document.getElementById('click-target');
         if (clickButton) {
-            // Use setProperty without 'important' so CSS active/hover can override
-            clickButton.style.setProperty('transform', `scale(${scale})`);
-            clickButton.style.setProperty('transition', 'transform 0.3s ease');
+            clickButton.style.setProperty('--combo-scale', scale);
         }
     } else {
         comboIndicator.classList.remove('active');
         comboIndicator.classList.remove('mega');
 
-        // Reset to normal size
+        const clickButton = document.getElementById('click-target');
         if (clickButton) {
-            clickButton.style.setProperty('transform', 'scale(1.0)');
+            clickButton.style.setProperty('--combo-scale', 1.0);
         }
     }
 }
