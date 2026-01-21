@@ -96,19 +96,24 @@
             <!-- RIGHT: Tabs & Shop -->
             <aside class="shop-panel">
                 <div class="tab-navigation">
-                    <button class="tab-btn active" onclick="switchTab('upgrades')">⚡ Upgrades</button>
+                    <button class="tab-btn active" onclick="switchTab('upgrades')"><img src="PowerUpgrades.png"
+                            alt="Upgrades" class="tab-icon-img"> Upgrades</button>
                     <button class="tab-btn" onclick="switchTab('skins')">🎨 Skins</button>
-                    <button class="tab-btn" onclick="switchTab('premium')">💎 Premium</button>
+                    <button class="tab-btn" onclick="switchTab('premium')"><img src="Premium.png" alt="Premium"
+                            class="tab-icon-img"> Premium</button>
                     <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
                     <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
                 </div>
 
                 <!-- UPGRADES TAB -->
                 <div class="tab-content active" id="tab-upgrades">
-                    <h3>⚡ Power Upgrades</h3>
+                    <h3><img src="PowerUpgrades.png" alt="Power Upgrades" class="section-header-img"> Power Upgrades
+                    </h3>
 
                     <div class="upgrade-item" onclick="buyUpgrade('clickPower')">
-                        <div class="upgrade-icon">👆</div>
+                        <div class="upgrade-icon">
+                            <img src="ClickPower.png" alt="Click Power" class="upgrade-icon-img">
+                        </div>
                         <div class="upgrade-info">
                             <h4>Click Power</h4>
                             <p>Level: <span id="level-clickPower">1</span></p>
@@ -119,7 +124,9 @@
                     </div>
 
                     <div class="upgrade-item" onclick="buyUpgrade('autoClicker')">
-                        <div class="upgrade-icon">🤖</div>
+                        <div class="upgrade-icon">
+                            <img src="AutoClicker.png" alt="Auto Clicker" class="upgrade-icon-img">
+                        </div>
                         <div class="upgrade-info">
                             <h4>Auto Clicker</h4>
                             <p>Level: <span id="level-autoClicker">0</span></p>
@@ -130,7 +137,9 @@
                     </div>
 
                     <div class="upgrade-item" onclick="buyUpgrade('critChance')">
-                        <div class="upgrade-icon">💥</div>
+                        <div class="upgrade-icon">
+                            <img src="CriticalHit.png" alt="Critical Hit" class="upgrade-icon-img">
+                        </div>
                         <div class="upgrade-info">
                             <h4>Critical Hit</h4>
                             <p>Level: <span id="level-critChance">0</span></p>
@@ -141,7 +150,9 @@
                     </div>
 
                     <div class="upgrade-item" onclick="buyUpgrade('multiplier')">
-                        <div class="upgrade-icon">✖️</div>
+                        <div class="upgrade-icon">
+                            <img src="CoinMultiplier.png" alt="Coin Multiplier" class="upgrade-icon-img">
+                        </div>
                         <div class="upgrade-info">
                             <h4>Coin Multiplier</h4>
                             <p>Level: <span id="level-multiplier">0</span></p>
@@ -235,12 +246,13 @@
 
                 <!-- PREMIUM TAB -->
                 <div class="tab-content" id="tab-premium">
-                    <h3>💎 Premium Shop</h3>
+                    <h3><img src="Premium.png" alt="Premium" class="section-header-img"> Premium Shop</h3>
                     <p class="premium-desc">Purchase with Telegram Stars</p>
 
                     <div class="premium-item" onclick="buyPremiumItem('coinbooster')">
                         <div class="premium-header">
-                            <h4>💰 Coin Booster</h4>
+                            <img src="CoinBooster.png" alt="Coin Booster" class="premium-icon-mini">
+                            <h4>Coin Booster</h4>
                             <span class="stars-cost">10 ⭐</span>
                         </div>
                         <p>1,000,000 Coins</p>
@@ -248,7 +260,8 @@
 
                     <div class="premium-item" onclick="buyPremiumItem('starter')">
                         <div class="premium-header">
-                            <h4>🌟 Starter Pack</h4>
+                            <img src="StarterPack.png" alt="Starter Pack" class="premium-icon-mini">
+                            <h4>Starter Pack</h4>
                             <span class="stars-cost">25 ⭐</span>
                         </div>
                         <p>1M Coins + Random Common Skin</p>
@@ -256,7 +269,8 @@
 
                     <div class="premium-item" onclick="buyPremiumItem('megaboost')">
                         <div class="premium-header">
-                            <h4>⚡ Mega Boost</h4>
+                            <img src="MegaBoost.png" alt="Mega Boost" class="premium-icon-mini">
+                            <h4>Mega Boost</h4>
                             <span class="stars-cost">50 ⭐</span>
                         </div>
                         <p>2x Multiplier for 24 hours</p>
@@ -264,7 +278,8 @@
 
                     <div class="premium-item" onclick="buyPremiumItem('legendary')">
                         <div class="premium-header">
-                            <h4>💫 Legendary Pack</h4>
+                            <img src="LegendaryPack.png" alt="Legendary Pack" class="premium-icon-mini">
+                            <h4>Legendary Pack</h4>
                             <span class="stars-cost">100 ⭐</span>
                         </div>
                         <p>3 Exclusive Legendary Skins</p>

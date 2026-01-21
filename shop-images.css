@@ -23,3 +23,66 @@
     line-height: 1;
     pointer-events: none;
 }
+
+/* ========== NEW SHOP IMAGES STYLES ========== */
+
+/* Upgrade Icons */
+.upgrade-icon-img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Premium Icons (Mini) */
+.premium-icon-mini {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Header Icons */
+.section-header-img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    margin-right: 8px;
+    vertical-align: text-bottom;
+}
+
+/* Tab Icons */
+.tab-icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    margin-right: 6px;
+    vertical-align: text-bottom;
+}
+
+/* Layout for Premium Header to align image, text and cost */
+.premium-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.premium-header h4 {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.premium-header .stars-cost {
+    white-space: nowrap;
+}
+
+/* Ensure images don't get squashed on small screens */
+@media (max-width: 480px) {
+    .premium-icon-mini {
+        width: 24px;
+        height: 24px;
+        margin-right: 5px;
+    }
+}
